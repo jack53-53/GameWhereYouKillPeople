@@ -4,24 +4,27 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerScript : MonoBehaviour
 {
-    
-    [Header("Movement")]
+
+    [Header("Movimento")]
     public float moveSpeed = 6f;
     public float gravity = -9.81f;
 
-    [Header("Mouse Look")]
+    [Header("Olhadas")]
     public float mouseSensitivity = 100f;
     public Transform playerCamera;
 
     private float xRotation = 0f;
     private CharacterController controller;
     private Vector3 velocity;
-
-    public Transform GunT;
+    public float PistolCooldown; //cooldown between each shot, in seconds
+    private float TotPistCol;
+    [Header("PoucoImportante")]
+    public MeshRenderer BangRender;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        TotPistCol = PistolCooldown;
 
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
@@ -31,9 +34,16 @@ public class PlayerScript : MonoBehaviour
     {
         HandleMouseLook();
         HandleMovement();
+        PistolCooldown-= Time.deltaTime;
 
         //PRA GIRAR A ARMA, ELA TEM QUE SEGUIR O X DA CAMERA, MOVENDO O Y DELA PRA IR PRA CIMA E PRA BAIXO E GIRANDO O Z
-        GunT.transform.position = new Vector3(playerCamera.transform.position.x, GunT.transform.position.y, GunT.transform.position.z);
+        //feito, era so colocar parent
+        // GunT.transform.position = new Vector3(playerCamera.transform.position.x, GunT.transform.position.y, GunT.transform.position.z);
+    }
+
+    void FixedUpdate()
+    {
+        BangRender.enabled = false;
     }
 
     void HandleMouseLook()
@@ -66,5 +76,25 @@ public class PlayerScript : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void OnFire()
+    {
+        if(PistolCooldown <= 0){
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, LayerMask.GetMask("Wall")))
+
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.Log("Did Hit");
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+            Debug.Log("Did not Hit");
+        }
+        PistolCooldown = TotPistCol;
+        BangRender.enabled = true;
+        }
     }
 }

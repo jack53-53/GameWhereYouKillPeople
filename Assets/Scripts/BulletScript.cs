@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BulletScript : MonoBehaviour
@@ -5,7 +6,6 @@ public class BulletScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -14,7 +14,7 @@ public class BulletScript : MonoBehaviour
         
     }
 
-    public void BulletSpawn(float Direcao, Transform T)
+    public void BulletSpawn()
     {
         
     }
