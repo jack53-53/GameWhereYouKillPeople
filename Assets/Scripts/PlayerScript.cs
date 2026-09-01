@@ -1,100 +1,103 @@
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(CharacterController))]
-public class PlayerScript : MonoBehaviour
+public class playerscript : MonoBehaviour
 {
+    public float Sens = 0.1f;
+    public float Speed = 5f;
 
-    [Header("Movimento")]
-    public float moveSpeed = 6f;
-    public float gravity = -9.81f;
+    public Rigidbody RB;
+    public Camera PlayerCamera;
 
-    [Header("Olhadas")]
-    public float mouseSensitivity = 100f;
-    public Transform playerCamera;
+    private Vector2 Dire;
+    private Vector2 Look;
+    private bool Fired;
 
-    private float xRotation = 0f;
-    private CharacterController controller;
-    private Vector3 velocity;
-    public float PistolCooldown; //cooldown between each shot, in seconds
-    private float TotPistCol;
-    [Header("PoucoImportante")]
-    public MeshRenderer BangRender;
+    public GameObject BulletHolePrefab;
+
+    private float cameraPitch;
+    LayerMask layerMask;
+
+    private bool Interagiu;
 
     void Start()
     {
-        controller = GetComponent<CharacterController>();
-        TotPistCol = PistolCooldown;
-
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        layerMask = LayerMask.GetMask("Default");
     }
 
     void Update()
     {
-        HandleMouseLook();
-        HandleMovement();
-        PistolCooldown-= Time.deltaTime;
 
-        //PRA GIRAR A ARMA, ELA TEM QUE SEGUIR O X DA CAMERA, MOVENDO O Y DELA PRA IR PRA CIMA E PRA BAIXO E GIRANDO O Z
-        //feito, era so colocar parent
-        // GunT.transform.position = new Vector3(playerCamera.transform.position.x, GunT.transform.position.y, GunT.transform.position.z);
     }
 
     void FixedUpdate()
     {
-        BangRender.enabled = false;
-    }
+        // Movement relative to where the player is facing
+        Vector3 move =
+            transform.right * Dire.x +
+            transform.forward * Dire.y;
 
-    void HandleMouseLook()
-    {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        Vector3 velocity = RB.linearVelocity;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        RB.linearVelocity = new Vector3(
+            move.x * Speed,
+            velocity.y,
+            move.z * Speed
+        );
 
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        transform.Rotate(Vector3.up * mouseX);
-    }
+        // Vertical camera rotation
+        cameraPitch -= Look.y * Sens;
+        cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
-    void HandleMovement()
-    {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        PlayerCamera.transform.localRotation =
+            Quaternion.Euler(cameraPitch, 0f, 0f);
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        // Horizontal player rotation
+        transform.Rotate(Vector3.up * Look.x * Sens);
 
-        controller.Move(move * moveSpeed * Time.deltaTime);
-
-        // Apply gravity
-        if (controller.isGrounded && velocity.y < 0)
+        if (Fired)
         {
-            velocity.y = -2f;
-        }
-
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-    }
-
-    public void OnFire()
-    {
-        if(PistolCooldown <= 0){
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, LayerMask.GetMask("Wall")))
+             RaycastHit hit;
+        // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
 
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
             Debug.Log("Did Hit");
+                    GameObject bulletHole = Instantiate(
+            BulletHolePrefab,
+            hit.point + hit.normal * 0.001f,
+            Quaternion.LookRotation(-hit.normal)
+        );
+
+        Destroy(bulletHole, 10f);
         }
         else
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+            Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
             Debug.Log("Did not Hit");
         }
-        PistolCooldown = TotPistCol;
-        BangRender.enabled = true;
+        Fired = false;
         }
+    }
+
+    public void OnAttack(InputValue e)
+    {
+        Fired = e.isPressed;
+    }
+
+    public void OnMove(InputValue e)
+    {
+        Dire = e.Get<Vector2>();
+    }
+
+    public void OnLook(InputValue e)
+    {
+        Look = e.Get<Vector2>();
+    }
+    public void OnInteract(InputValue e)
+    {
+        Interagiu = e.isPressed;
     }
 }
