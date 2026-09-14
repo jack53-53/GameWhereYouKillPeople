@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class playerscript : MonoBehaviour
     public float Speed = 5f;
     public int DMG;
     public RawImage KillEffect;
+    public float MultiplierKillEffectSpeed;
 
     public Rigidbody RB;
     public Camera PlayerCamera;
@@ -16,7 +18,6 @@ public class playerscript : MonoBehaviour
     private Vector2 Dire;
     private Vector2 Look;
     private bool Fired;
-    private int StageKillEffect; //suboptimal
 
     public GameObject BulletHolePrefab;
 
@@ -99,16 +100,41 @@ public class playerscript : MonoBehaviour
 
     IEnumerator KillScreenEffect()
     {
-        KillEffect.CrossFadeAlpha(0.7f, 0.2f, false);
-        Debug.Log("É suposto mudar algo");
+        float t = 0f;
+        Color c = KillEffect.color;
+        while (KillEffect.color.a != 0.7f)
+        {
+        t += Time.deltaTime;
+        c = KillEffect.color;
+        c.a = Mathf.Lerp(0,0.7f,t /MultiplierKillEffectSpeed);
+        KillEffect.color = c;
+        }
+        yield return null;
+        while (KillEffect.color.a != 0f)
+        {
+        t -= Time.deltaTime;
+        c = KillEffect.color;
+        c.a = Mathf.Lerp(0,0.7f,t /MultiplierKillEffectSpeed);
+        KillEffect.color = c;
+        }
+        yield return null;
+        while (KillEffect.color.a != 0.9f)
+        {
+        t += Time.deltaTime;
+        c = KillEffect.color;
+        c.a = Mathf.Lerp(0,0.9f,t /MultiplierKillEffectSpeed);
+        KillEffect.color = c;
+        }
+        yield return null;       
+        while (KillEffect.color.a != 0f)
+        {
+        t -= Time.deltaTime;
+        c = KillEffect.color;
+        c.a = Mathf.Lerp(0,0.7f,t /MultiplierKillEffectSpeed);
+        KillEffect.color = c;
+        }
+        yield return null;
 
-        yield return new WaitForSeconds(0.2f);
-
-        KillEffect.CrossFadeAlpha(0.9f, 0.2f, false);
-
-        yield return new WaitForSeconds(0.2f);
-
-        KillEffect.CrossFadeAlpha(0f, 2f, false);
     }
 
     public void OnAttack(InputValue e)
