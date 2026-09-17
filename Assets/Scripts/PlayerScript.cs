@@ -1,8 +1,9 @@
 using System.Collections;
-using Unity.VisualScripting;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class playerscript : MonoBehaviour
 {
@@ -16,15 +17,21 @@ public class playerscript : MonoBehaviour
     public Camera PlayerCamera;
 
     private Vector2 Dire;
+    public float jumpStrenght = 0f;
+    public float timeBetweenJumps = 0f;
+    private float _timerBetweenJumps = 0f;
     private Vector2 Look;
     private bool Fired;
+    private float t;
 
     public GameObject BulletHolePrefab;
+    private float cameraRoll = 0f;
 
     private float cameraPitch;
     LayerMask layerMask;
 
     private bool Interagiu;
+    private bool Pulou;
 
     void Start()
     {
@@ -32,11 +39,24 @@ public class playerscript : MonoBehaviour
         Color color = KillEffect.color;
         color.a = 0f;
         KillEffect.color = color;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-
+        
+        if (Pulou)
+        {
+            //transform.position = new Vector3(transform.position.x, transform.position.y + jumpStrenght, transform.position.z);RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), 1.2f) && _timerBetweenJumps < 0)
+            {
+                RB.AddForce(new Vector3(0, jumpStrenght, 0));
+                //Pulou = false; //buffer(?) //ficou muito ruim
+                _timerBetweenJumps = timeBetweenJumps;
+            }
+            Pulou = false;
+        }
+        _timerBetweenJumps -= Time.deltaTime;
     }
 
     void FixedUpdate()
@@ -53,18 +73,39 @@ public class playerscript : MonoBehaviour
             move.z * Speed
         );
 
-
         cameraPitch -= Look.y * Sens;
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
+
+        float targetRoll = -Dire.x * 10f;
+
+
+        if (Dire.x > 0)
+        {
+            targetRoll = -10f;
+        }
+        else if (Dire.x < 0)
+        {
+            targetRoll = 10f;
+        }
+
+        if(cameraRoll != targetRoll)
+        {
+            t = Time.deltaTime * 1;
+           cameraRoll = Mathf.Lerp(cameraRoll, targetRoll, t * 8f);
+        }
+        else
+        {
+            t = 0f;
+        }
+
         PlayerCamera.transform.localRotation =
-            Quaternion.Euler(cameraPitch, 0f, 0f);
+            Quaternion.Euler(cameraPitch, 0f, cameraRoll);
 
         transform.Rotate(Vector3.up * Look.x * Sens);
 
-       
 
-        if (Fired) //decal do buraco do tiro
+        if (Fired)
         {
             RaycastHit hit;
             if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
@@ -104,33 +145,33 @@ public class playerscript : MonoBehaviour
         Color c = KillEffect.color;
         while (KillEffect.color.a != 0.7f)
         {
-        t += Time.deltaTime;
+        t += Time.deltaTime * MultiplierKillEffectSpeed;
         c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.7f,t /MultiplierKillEffectSpeed);
+        c.a = Mathf.Lerp(0,0.7f,t /1);
         KillEffect.color = c;
         }
         yield return null;
         while (KillEffect.color.a != 0f)
         {
-        t -= Time.deltaTime;
+        t -= Time.deltaTime * MultiplierKillEffectSpeed;
         c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.7f,t /MultiplierKillEffectSpeed);
+        c.a = Mathf.Lerp(0,0.7f,t /1);
         KillEffect.color = c;
         }
         yield return null;
         while (KillEffect.color.a != 0.9f)
         {
-        t += Time.deltaTime;
+        t += Time.deltaTime * MultiplierKillEffectSpeed;
         c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.9f,t /MultiplierKillEffectSpeed);
+        c.a = Mathf.Lerp(0,0.9f,t /1);
         KillEffect.color = c;
         }
         yield return null;       
         while (KillEffect.color.a != 0f)
         {
-        t -= Time.deltaTime;
+        t -= Time.deltaTime * MultiplierKillEffectSpeed;
         c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.7f,t /MultiplierKillEffectSpeed);
+        c.a = Mathf.Lerp(0,0.7f,t /1);
         KillEffect.color = c;
         }
         yield return null;
@@ -154,5 +195,10 @@ public class playerscript : MonoBehaviour
     public void OnInteract(InputValue e)
     {
         Interagiu = e.isPressed;
+    }
+
+    public void OnJump(InputValue e)
+    {
+        Pulou = e.isPressed;
     }
 }
