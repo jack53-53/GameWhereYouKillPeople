@@ -15,6 +15,7 @@ public class playerscript : MonoBehaviour
 
     public Rigidbody RB;
     public Camera PlayerCamera;
+    private int SelectedWeapon; //0 = sem arma, 1 = pistola, 2 = rifle, 3 = granada, 4 = bazooka, 5 = BFG
 
     private Vector2 Dire;
     public float jumpStrenght = 0f;
@@ -105,11 +106,10 @@ public class playerscript : MonoBehaviour
         transform.Rotate(Vector3.up * Look.x * Sens);
 
 
-        if (Fired)
+        if (Fired && SelectedWeapon == 1) //isso ta ok pra pistola
         {
             RaycastHit hit;
             if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
-
             {
                 Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
                 GameObject bulletHole = Instantiate(BulletHolePrefab,hit.point + hit.normal * 0.001f,Quaternion.LookRotation(-hit.normal));
@@ -180,7 +180,7 @@ public class playerscript : MonoBehaviour
 
     public void OnAttack(InputValue e)
     {
-        Fired = e.isPressed;
+        Fired = e.isPressed; //tem que fazer ser automatico
     }
 
     public void OnMove(InputValue e)
