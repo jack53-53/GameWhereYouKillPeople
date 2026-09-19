@@ -26,6 +26,7 @@ public class playerscript : MonoBehaviour
     private float t;
 
     public GameObject BulletHolePrefab;
+    public GameObject SprayPrefab;
     private float cameraRoll = 0f;
 
     private float cameraPitch;
@@ -33,6 +34,7 @@ public class playerscript : MonoBehaviour
 
     private bool Interagiu;
     private bool Pulou;
+    private bool Sprayou;
 
     void Start()
     {
@@ -58,6 +60,18 @@ public class playerscript : MonoBehaviour
             Pulou = false;
         }
         _timerBetweenJumps -= Time.deltaTime;
+
+        if (Sprayou)
+        {
+            RaycastHit hit;
+            if(Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
+            {
+                Quaternion rotation = Quaternion.FromToRotation(Vector3.up,hit.normal);
+                GameObject SprayPng = Instantiate(SprayPrefab,hit.point + hit.normal * 0.001f,rotation);
+                // Destroy(SprayPng);
+            }
+            Sprayou = false;
+        }
     }
 
     void FixedUpdate()
@@ -106,7 +120,7 @@ public class playerscript : MonoBehaviour
         transform.Rotate(Vector3.up * Look.x * Sens);
 
 
-        if (Fired && SelectedWeapon == 1) //isso ta ok pra pistola
+        if (Fired) //isso ta ok pra pistola
         {
             RaycastHit hit;
             if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
@@ -200,5 +214,10 @@ public class playerscript : MonoBehaviour
     public void OnJump(InputValue e)
     {
         Pulou = e.isPressed;
+    }
+
+    public void OnSpray(InputValue e)
+    {
+        Sprayou = e.isPressed;
     }
 }

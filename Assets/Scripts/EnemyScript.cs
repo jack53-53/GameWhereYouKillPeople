@@ -67,7 +67,7 @@ public class EnemyScript : MonoBehaviour
     private void FollowPlayer()
     {
         _agent.SetDestination(playerTransform.position);
-        Debug.Log("tentando seguir o jogador");
+        // Debug.Log("tentando seguir o jogador");
     }
 
     private bool canSeePlayer()
@@ -79,7 +79,7 @@ public class EnemyScript : MonoBehaviour
     {
         var dirToPlayer = (playerTransform.position - transform.position).normalized;
         var angle = Vector3.Angle(transform.forward, dirToPlayer);
-        Debug.Log("vi o jogador");
+        // Debug.Log("vi o jogador");
         return angle <= viewAngle / 2f;
     }
 
