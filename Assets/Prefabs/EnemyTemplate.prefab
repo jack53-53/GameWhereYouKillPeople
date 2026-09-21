@@ -130,7 +130,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   HP: 3
-  speed: 6
+  DamageIDeal: 1
+  p: {fileID: 5997525931046463716, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
+  speed: 3
   timeBetweenAttacks: 2
   playerTransform: {fileID: 4732497464173465676, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
   _agent: {fileID: 1032436408738881619}

@@ -6,7 +6,9 @@ using UnityEngine.UIElements;
 public class EnemyScript : MonoBehaviour
 {
     public int HP;
+    public int DamageIDeal;
     public float speed;
+    private float _speed;
     public float timeBetweenAttacks;
     private float _timeBetweenAttacks;
     public Transform playerTransform;
@@ -16,19 +18,23 @@ public class EnemyScript : MonoBehaviour
     private float losePlayerTime = 3f;
     private bool IsIdle = true;
     private bool Atacou;
+    private GameObject player;
     private float _timeSinceLostPlayer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _timeBetweenAttacks = timeBetweenAttacks;
         _timeSinceLostPlayer = losePlayerTime;
+        _speed = speed;
+        _agent.speed = _speed;
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame
     void Update()
     {
         var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
-        Debug.Log(distanceToPlayer);
+        //Debug.Log(distanceToPlayer);
         if(distanceToPlayer <= detectionRange && canSeePlayer())
         {
             IsIdle = false;
@@ -42,7 +48,7 @@ public class EnemyScript : MonoBehaviour
                 _timeSinceLostPlayer += Time.deltaTime;
                 if(_timeSinceLostPlayer >= losePlayerTime)
                 {
-                    Debug.Log("perdi o player");
+                    //Debug.Log("perdi o player");
                     IsIdle = true;
                 }
             }
@@ -50,18 +56,27 @@ public class EnemyScript : MonoBehaviour
             {
                 _timeSinceLostPlayer = 0f;
             }
+            if (HP <= 0)
+            {
+                Destroy(gameObject);
+            }
+            if (_timeBetweenAttacks < 0)
+            {
+                _speed = 0;
+                _agent.speed = _speed;
+                _timeBetweenAttacks = timeBetweenAttacks;
+                //Atacou = true; //depois no codigo do inimigo tem que tirar isso aq
+                //se tiver caminho livre pro player, vai ficar parado atirando, senão, vai pro ultimo lugar que ele viu o player.
+                player.GetComponent<playerscript>().takeDamage(DamageIDeal);
+            }
+            else
+            {
+                _speed = speed;
+                _agent.speed = _speed;
+            }
         }
         // Debug.Log("estou procurando pelo player");
-        if(HP <= 0)
-        {
-            Destroy(gameObject);
-        }
-        if(_timeBetweenAttacks < 0)
-        {
-            _timeBetweenAttacks = timeBetweenAttacks;
-            Atacou = true; //depois no codigo do inimigo tem que tirar isso aq
-        }
-        _timeBetweenAttacks -= timeBetweenAttacks;
+        _timeBetweenAttacks -= Time.deltaTime;
     }
 
     private void FollowPlayer()

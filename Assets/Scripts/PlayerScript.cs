@@ -3,11 +3,12 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class playerscript : MonoBehaviour
 {
     public float Sens = 0.1f;
+
+    public int HP;
     public float Speed = 5f;
     public int DMG;
     public RawImage KillEffect;
@@ -126,7 +127,7 @@ public class playerscript : MonoBehaviour
             if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
             {
                 Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-                GameObject bulletHole = Instantiate(BulletHolePrefab,hit.point + hit.normal * 0.001f,Quaternion.LookRotation(-hit.normal));
+                GameObject bulletHole = Instantiate(BulletHolePrefab,hit.point + hit.normal * 0.001f,Quaternion.LookRotation(-hit.normal));//TODO:atirar uma vez, esperar o cooldown de cada arma e atirar dnv
                 Destroy(bulletHole, 10f);
                 if (hit.transform.gameObject)
                 {
@@ -192,9 +193,74 @@ public class playerscript : MonoBehaviour
 
     }
 
-    public void OnAttack(InputValue e)
+    public void takeDamage(int DMG)
     {
-        Fired = e.isPressed; //tem que fazer ser automatico
+        HP -= DMG;
+        StartCoroutine(DamageCamera());
+    }
+
+    IEnumerator DamageCamera()
+    {
+        float targetRoll = UnityEngine.Random.Range(cameraPitch - 10f, cameraPitch - 30f);
+        float duration = 0.01f;
+        float timer = 0f;
+        float _cameraPitch = cameraPitch;
+        
+
+        float startingRoll = cameraPitch;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            cameraPitch = Mathf.Lerp(
+                startingRoll,
+                targetRoll,
+                timer / duration
+            );
+
+            yield return null;
+        }
+
+        cameraPitch = targetRoll;
+        StartCoroutine(CameraRecover(_cameraPitch));
+    }
+
+    IEnumerator CameraRecover(float X) //pra camera fazer o recover, eu to salvando o valor original antes de mudar, e dai eu to fazendo a mesma função dnv so que sem o recover
+    {
+        float targetRoll = X;
+        float duration = 0.1f;
+        float timer = 0f;
+
+        float startingRoll = cameraPitch;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            cameraPitch = Mathf.Lerp(
+                startingRoll,
+                targetRoll,
+                timer / duration
+            );
+
+            yield return null;
+        }
+
+        cameraPitch = targetRoll;
+    }
+
+    public void OnAttack(InputAction.CallbackContext e)
+    {
+        //Fired = e.isPressed; //tem que fazer ser automatico
+        if (e.performed)
+        {
+            Fired = true;
+        }
+        else if (e.canceled)
+        {
+            Fired = false;
+        }
     }
 
     public void OnMove(InputValue e)
