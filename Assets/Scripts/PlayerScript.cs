@@ -36,6 +36,13 @@ public class playerscript : MonoBehaviour
     private bool Interagiu;
     private bool Pulou;
     private bool Sprayou;
+    [Header("COOLDOWN ENTRE TIROS DE CADA ARMA")]
+    public float meleeCL;
+    public float pistolaCL;
+    public float rifleCL;
+    public float rocketCL;
+    public float doideraCL;
+    private float _tiroCL;
 
     void Start()
     {
@@ -127,18 +134,23 @@ public class playerscript : MonoBehaviour
             switch (SelectedWeapon)
             {
                 case 1:
+                    if(_tiroCL <= 0)
+                    {
 
+                    }
                     break;
 
             }
 
         }
     }
-        private void atirar(int DMG, float Cooldown)
-    {
+        private void atirar(int DMG)
+        {
+        RaycastHit hit;
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+
             GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TODO:atirar uma vez, esperar o cooldown de cada arma e atirar dnv
             Destroy(bulletHole, 10f);
             if (hit.transform.gameObject)
