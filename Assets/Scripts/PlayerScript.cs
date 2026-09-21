@@ -105,10 +105,10 @@ public class playerscript : MonoBehaviour
             targetRoll = 10f;
         }
 
-        if(cameraRoll != targetRoll)
+        if (cameraRoll != targetRoll)
         {
             t = Time.deltaTime * 1;
-           cameraRoll = Mathf.Lerp(cameraRoll, targetRoll, t * 8f);
+            cameraRoll = Mathf.Lerp(cameraRoll, targetRoll, t * 8f);
         }
         else
         {
@@ -121,44 +121,55 @@ public class playerscript : MonoBehaviour
         transform.Rotate(Vector3.up * Look.x * Sens);
 
 
-        if (Fired) //isso ta ok pra pistola
+        if (Fired)
         {
             RaycastHit hit;
-            if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
+            switch (SelectedWeapon)
             {
-                Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-                GameObject bulletHole = Instantiate(BulletHolePrefab,hit.point + hit.normal * 0.001f,Quaternion.LookRotation(-hit.normal));//TODO:atirar uma vez, esperar o cooldown de cada arma e atirar dnv
-                Destroy(bulletHole, 10f);
-                if (hit.transform.gameObject)
+                case 1:
+
+                    break;
+
+            }
+
+        }
+    }
+        private void atirar(int DMG, float Cooldown)
+    {
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
+        {
+            Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TODO:atirar uma vez, esperar o cooldown de cada arma e atirar dnv
+            Destroy(bulletHole, 10f);
+            if (hit.transform.gameObject)
+            {
+                if (hit.transform.gameObject.GetComponent<EnemyScript>() != null)
                 {
-                    if(hit.transform.gameObject.GetComponent<EnemyScript>() != null)
+                    EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
+                    p.HP -= DMG;
+                    if (p.HP <= 0)
                     {
-                        EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
-                        p.HP -= DMG;
-                        if(p.HP <= 0)
-                        {
-                            StartCoroutine(KillScreenEffect());
-                            //piscar a tela azul estilo gta
-                            //70% clareza
-                            //90% clareza
-                            //desce ate zero
-                        }
+                        StartCoroutine(KillScreenEffect());
+                        //piscar a tela azul estilo gta
+                        //70% clareza
+                        //90% clareza
+                        //desce ate zero
                     }
                 }
             }
-            else
-            {
-                Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
-            }
-            Fired = false;
         }
+        else
+        {
+            Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+        }
+        Fired = false;
     }
 
     IEnumerator KillScreenEffect()
     {
         float t = 0f;
         Color c = KillEffect.color;
-        while (KillEffect.color.a != 0.7f)
+        while (KillEffect.color.a != 0.5f)
         {
         t += Time.deltaTime * MultiplierKillEffectSpeed;
         c = KillEffect.color;
@@ -174,7 +185,7 @@ public class playerscript : MonoBehaviour
         KillEffect.color = c;
         }
         yield return null;
-        while (KillEffect.color.a != 0.9f)
+        while (KillEffect.color.a != 0.7f)
         {
         t += Time.deltaTime * MultiplierKillEffectSpeed;
         c = KillEffect.color;
