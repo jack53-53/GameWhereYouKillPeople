@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,7 +17,7 @@ public class playerscript : MonoBehaviour
 
     public Rigidbody RB;
     public Camera PlayerCamera;
-    private int SelectedWeapon; //0 = sem arma, 1 = pistola, 2 = rifle, 3 = granada, 4 = bazooka, 5 = BFG
+    public int SelectedWeapon; //0 = sem arma, 1 = pistola, 2 = rifle, 3 = granada, 4 = bazooka, 5 = BFG //talvez trocar a granada por uma shotgun?
 
     private Vector2 Dire;
     public float jumpStrenght = 0f;
@@ -40,9 +41,48 @@ public class playerscript : MonoBehaviour
     public float meleeCL;
     public float pistolaCL;
     public float rifleCL;
+    public float grandaCL;
     public float rocketCL;
     public float doideraCL;
     private float _tiroCL;
+    [Header("DANO DE CADA ARMA")]
+
+    public int meleeDMG;
+    public int pistolDMG;
+    public int rifleDMG;
+    public int granadaDMG;
+    public int rocketDMG;
+    public int doideraDMG;
+    private bool Reloading;
+    //TODO: A PARTIR DAQUI ISSO NAO TEM EFEITO NO JOGO
+    [Header("QUANTO CADA ARMA CONSEGUE LEVAR NO PENTE")]
+    public int pistolMAG;
+    public int rifleMAG;
+    public int granadaMAG;
+    public int rocketMAG;
+    public int doideraMAG;
+    private int _pistolMAG;
+    private int _rifleMAG;
+    private int _granadaMAG;
+    private int _rocketMAG;
+    private int _doideraMAG;
+    [Header("QUANTO DE MUNIÇÃO DE CADA ARMA O PLAYER CONSEGUE LEVAR")]
+    public int pistolMAX;
+    public int rifleMAX;
+    public int granadaMAX;
+    public int rocketMAX;
+    public int doideraMAX;
+    [Header("quanto de munição o jogador tem agora")]
+    public int _pistolMAX;
+    public int _rifleMAX;
+    public int _granadaMAX;
+    public int _rocketMAX;
+    public int _doideraMAX;
+    public TextMeshProUGUI debugTXT;
+    public TextMeshProUGUI vidaTXT;
+    public TextMeshProUGUI ammoTXT;
+    private string writeToScreen;
+    
 
     void Start()
     {
@@ -51,11 +91,19 @@ public class playerscript : MonoBehaviour
         color.a = 0f;
         KillEffect.color = color;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-    }
+         _pistolMAG = pistolMAG;
+    _rifleMAG = rifleMAG;
+    _granadaMAG = granadaMAG;
+    _rocketMAG = rocketMAG;
+    _doideraMAG = doideraMAG;
+}
 
     void Update()
     {
-        
+        vidaTXT.text = HP.ToString();
+        debugTXT.text = writeToScreen;
+        if (Mouse.current != null)
+            Fired = Mouse.current.leftButton.isPressed;
         if (Pulou)
         {
             //transform.position = new Vector3(transform.position.x, transform.position.y + jumpStrenght, transform.position.z);RaycastHit hit;
@@ -84,6 +132,7 @@ public class playerscript : MonoBehaviour
 
     void FixedUpdate()
     {
+        _tiroCL -= Time.fixedDeltaTime;
         Vector3 move =
             transform.right * Dire.x +
             transform.forward * Dire.y;
@@ -100,16 +149,16 @@ public class playerscript : MonoBehaviour
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
 
-        float targetRoll = -Dire.x * 10f;
+        float targetRoll = -Dire.x * 7f;
 
 
         if (Dire.x > 0)
         {
-            targetRoll = -10f;
+            targetRoll = -7f;
         }
         else if (Dire.x < 0)
         {
-            targetRoll = 10f;
+            targetRoll = 7f;
         }
 
         if (cameraRoll != targetRoll)
@@ -121,29 +170,205 @@ public class playerscript : MonoBehaviour
         {
             t = 0f;
         }
+        //Debug.Log("cooldown tiro:" + _tiroCL );
+        //Debug.Log("atirando?:" + Fired.ToString() );
 
         PlayerCamera.transform.localRotation =
             Quaternion.Euler(cameraPitch, 0f, cameraRoll);
 
         transform.Rotate(Vector3.up * Look.x * Sens);
 
-
-        if (Fired)
+        if (Reloading)
         {
-            RaycastHit hit;
             switch (SelectedWeapon)
             {
-                case 1:
-                    if(_tiroCL <= 0)
-                    {
+                case 0:
+                    //inspecionar?
+                    break;
 
+                case 1:
+                    if (_pistolMAG < pistolMAG)
+                    {
+                        if (_pistolMAX > 0)
+                        {
+                            int amountToReload = Mathf.Min(pistolMAG - _pistolMAG, _pistolMAX);
+                            _pistolMAG += amountToReload;
+                            _pistolMAX -= amountToReload;
+                        }
+                        else
+                        {
+                            Debug.Log("SEM BALA");
+                        }
+                        ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
                     }
                     break;
 
-            }
+                case 2:
+                    if (_rifleMAG < rifleMAG)
+                    {
+                        if (_rifleMAX > 0)
+                        {
+                            int amountToReload = Mathf.Min(rifleMAG - _rifleMAG, _rifleMAX);
+                            _rifleMAG += amountToReload;
+                            _rifleMAX -= amountToReload;
+                        }
+                        else
+                        {
+                            Debug.Log("SEM BALA");
+                        }
+                        ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
+                    }
+                    break;
 
+                case 3:
+                    if (_granadaMAG < granadaMAG)
+                    {
+                        if (_granadaMAX > 0)
+                        {
+                            int amountToReload = Mathf.Min(granadaMAG - _granadaMAG, _granadaMAX);
+                            _granadaMAG += amountToReload;
+                            _granadaMAX -= amountToReload;
+                        }
+                        else
+                        {
+                            Debug.Log("SEM BALA");
+                        }
+                        ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
+                    }
+                    break;
+
+                case 4:
+                    if (_rocketMAG < rocketMAG)
+                    {
+                        if (_rocketMAX > 0)
+                        {
+                            int amountToReload = Mathf.Min(rocketMAG - _rocketMAG, _rocketMAX);
+                            _rocketMAG += amountToReload;
+                            _rocketMAX -= amountToReload;
+                        }
+                        else
+                        {
+                            Debug.Log("SEM BALA");
+                        }
+                        ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
+                    }
+                    break;
+
+                case 5:
+                    if (_doideraMAG < doideraMAG)
+                    {
+                        if (_doideraMAX > 0)
+                        {
+                            int amountToReload = Mathf.Min(doideraMAG - _doideraMAG, _doideraMAX);
+                            _doideraMAG += amountToReload;
+                            _doideraMAX -= amountToReload;
+                        }
+                        else
+                        {
+                            Debug.Log("SEM BALA");
+                        }
+                        ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
+                    }
+                    break;
+            }
         }
-    }
+        Reloading = false;
+        Reloading = false;
+
+        if (Fired)
+        {
+            switch (SelectedWeapon)
+            {
+                case 0:
+                    writeToScreen = "MELEE";
+                    if (_tiroCL <= 0)
+                    {
+                        atirar(meleeDMG);
+                        _tiroCL = meleeCL;
+                    }
+                    break;
+                case 1:
+                    writeToScreen = "PISTOLA";
+                    ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
+                    if (_tiroCL <= 0)
+                    {
+                        if (_pistolMAG > 0)
+                        {
+                            atirar(pistolDMG);
+                            _tiroCL = pistolaCL;
+                            _pistolMAG--;
+                        }
+                        else
+                        {
+                            Reloading = true;
+                        }
+                    }
+                    break;
+
+                case 2:
+                    writeToScreen = "RIFLE";
+                    ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
+                    if (_tiroCL <= 0)
+                    {
+                        if(_rifleMAG > 0)
+                        {
+                            atirar(rifleDMG);
+                            _tiroCL = rifleCL;
+                            _rifleMAG--;
+                        }
+                        else
+                        {
+                            Reloading = true;
+                        }
+                    }
+                    break;
+                case 3:
+                    writeToScreen = "GRANDA";
+                    if (_tiroCL <= 0)
+                    {
+                        //atirar(DMG);
+                        //_tiroCL = grandaCL;
+                        //TODO:SPAWNAR PREFAB GRANADA
+                    }
+                    break;
+
+                case 4:
+                    writeToScreen = "ROCKET";
+                    ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
+                    if (_tiroCL <= 0)
+                    {
+                        atirar(rocketDMG);
+                        _tiroCL = rocketCL;
+                    }
+                    else
+                    {
+                        Reloading = true;
+                    }
+                    break;
+                case 5:
+                    writeToScreen = "DOIDERA";
+                    ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
+                    if (_tiroCL <= 0)
+                    {
+                        atirar(doideraDMG);
+                        _tiroCL = doideraCL;
+                    }
+                    else
+                    {
+                        Reloading = true;
+                    }
+                    break;
+            }
+            }
+        }
+        //else
+        //{
+        //    Debug.DrawRay(
+        //        PlayerCamera.transform.position,
+        //        PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000,
+        //        Color.white
+        //    );
+        //}
         private void atirar(int DMG)
         {
         RaycastHit hit;
@@ -174,9 +399,13 @@ public class playerscript : MonoBehaviour
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
         }
-        Fired = false;
     }
 
+
+    private void EfeitoNoAmmo()
+    {
+        //caso queiramos um efeito quando o jogador esta sem munição e tenta atirar, talvez so um som
+    }
     IEnumerator KillScreenEffect()
     {
         float t = 0f;
@@ -273,18 +502,41 @@ public class playerscript : MonoBehaviour
         cameraPitch = targetRoll;
     }
 
-    public void OnAttack(InputAction.CallbackContext e)
+    public void OnWeapon0(InputValue e)
     {
-        //Fired = e.isPressed; //tem que fazer ser automatico
-        if (e.performed)
-        {
-            Fired = true;
-        }
-        else if (e.canceled)
-        {
-            Fired = false;
-        }
+        SelectedWeapon = 0;
     }
+    public void OnWeapon1(InputValue e)
+    {
+        SelectedWeapon = 1;
+    }
+    public void OnWeapon2(InputValue e)
+    {
+        SelectedWeapon = 2;
+    }
+    public void OnWeapon3(InputValue e)
+    {
+        SelectedWeapon = 3;
+    }
+    public void OnWeapon4(InputValue e)
+    {
+        SelectedWeapon = 4;
+    }
+    public void OnWeapon5(InputValue e)
+    {
+        SelectedWeapon = 5;
+    }
+
+    public void OnReload(InputValue e)
+    {
+        Reloading = e.isPressed;
+        Debug.Log("tentando recaregar");
+    }
+
+    //public void OnAttack(InputValue e)
+    //{
+    //    Fired = e.isPressed; //NÃO TA VOLTANDO A SER FALSE
+    //}
 
     public void OnMove(InputValue e)
     {
