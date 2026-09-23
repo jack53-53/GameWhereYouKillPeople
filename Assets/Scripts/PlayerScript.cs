@@ -273,7 +273,6 @@ public class playerscript : MonoBehaviour
             }
         }
         Reloading = false;
-        Reloading = false;
 
         if (Fired)
         {
