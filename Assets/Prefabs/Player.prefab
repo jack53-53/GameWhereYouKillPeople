@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4596808998432246456}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.407, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -402,11 +402,42 @@ MonoBehaviour:
   timeBetweenJumps: 1
   BulletHolePrefab: {fileID: 7260492420778499948, guid: fbfa3424403c59f4caed35407707b90b, type: 3}
   SprayPrefab: {fileID: 7978275602769355988, guid: 7ed3055ad562fd144b047e5639ac1eb5, type: 3}
+  overHealTime: 0
   meleeCL: 0.25
   pistolaCL: 0.3
   rifleCL: 0.1
+  grandaCL: 0
   rocketCL: 2
   doideraCL: 5
+  meleeDMG: 0
+  pistolDMG: 0
+  rifleDMG: 0
+  granadaDMG: 0
+  rocketDMG: 0
+  doideraDMG: 0
+  pistolMAG: 0
+  rifleMAG: 0
+  granadaMAG: 0
+  rocketMAG: 0
+  doideraMAG: 0
+  pistolMAX: 0
+  rifleMAX: 0
+  granadaMAX: 0
+  rocketMAX: 0
+  doideraMAX: 0
+  _pistolMAX: 0
+  _rifleMAX: 0
+  _granadaMAX: 0
+  _rocketMAX: 0
+  _doideraMAX: 0
+  pistolReload: 0
+  rifleReload: 0
+  granadaReload: 0
+  rocketReload: 0
+  doideraReload: 0
+  debugTXT: {fileID: 0}
+  vidaTXT: {fileID: 0}
+  ammoTXT: {fileID: 0}
 --- !u!54 &5945511653847656092
 Rigidbody:
   m_ObjectHideFlags: 0

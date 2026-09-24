@@ -33,6 +33,11 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (HP <= 0)
+        {
+            Destroy(gameObject);
+        }
+        Debug.Log(HP);
         var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
         //Debug.Log(distanceToPlayer);
         if(distanceToPlayer <= detectionRange && canSeePlayer())
@@ -55,10 +60,6 @@ public class EnemyScript : MonoBehaviour
             else
             {
                 _timeSinceLostPlayer = 0f;
-            }
-            if (HP <= 0)
-            {
-                Destroy(gameObject);
             }
             if (_timeBetweenAttacks < 0)
             {
@@ -106,5 +107,10 @@ public class EnemyScript : MonoBehaviour
             return hit.transform == playerTransform;
         }
         return true;
+    }
+
+    public void LookAtPlayer()
+    {
+        _agent.SetDestination(playerTransform.position);
     }
 }

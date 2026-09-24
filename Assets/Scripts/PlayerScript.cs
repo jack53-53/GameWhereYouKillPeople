@@ -32,11 +32,14 @@ public class playerscript : MonoBehaviour
     private float cameraRoll = 0f;
 
     private float cameraPitch;
-    LayerMask layerMask;
+    [Tooltip("quem o jogador CONSEGUE dar dano")]
+    public LayerMask layerMask;
 
     private bool Interagiu;
     private bool Pulou;
     private bool Sprayou;
+    [Tooltip("tempo que demora pra cada 1 de vida descer quando vc tem demais")]
+    public float overHealTime;
     [Header("COOLDOWN ENTRE TIROS DE CADA ARMA")]
     public float meleeCL;
     public float pistolaCL;
@@ -78,10 +81,17 @@ public class playerscript : MonoBehaviour
     public int _granadaMAX;
     public int _rocketMAX;
     public int _doideraMAX;
+    [Header("tempo de recarga de cada arma")]
+    public float pistolReload;
+    public float rifleReload;
+    public float granadaReload;
+    public float rocketReload;
+    public float doideraReload;
     public TextMeshProUGUI debugTXT;
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
     private string writeToScreen;
+    private bool lifeIsGoingDown;
     
 
     void Start()
@@ -100,6 +110,11 @@ public class playerscript : MonoBehaviour
 
     void Update()
     {
+        if(HP > 100 && !lifeIsGoingDown)
+        {
+            lifeIsGoingDown = true;
+            StartCoroutine(OverhealBGone());
+        }
         vidaTXT.text = HP.ToString();
         debugTXT.text = writeToScreen;
         if (Mouse.current != null)
@@ -127,6 +142,32 @@ public class playerscript : MonoBehaviour
                 // Destroy(SprayPng);
             }
             Sprayou = false;
+        }
+        switch (SelectedWeapon)
+        {
+            case 1:
+                writeToScreen = "PISTOLA";
+                ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
+                break;
+            case 2:
+                writeToScreen = "RIFLE";
+                ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
+                break;
+            case 3:
+                writeToScreen = "GRANADA";
+                ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
+                break;
+            case 4:
+                writeToScreen = "ROCKET";
+                ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
+                break;
+            case 5:
+                writeToScreen = "DOIDERA";
+                ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
+                break;
+            case 0:
+                writeToScreen = "MELEE";
+                break;
         }
     }
 
@@ -180,101 +221,10 @@ public class playerscript : MonoBehaviour
 
         if (Reloading)
         {
-            switch (SelectedWeapon)
-            {
-                case 0:
-                    //inspecionar?
-                    break;
-
-                case 1:
-                    if (_pistolMAG < pistolMAG)
-                    {
-                        if (_pistolMAX > 0)
-                        {
-                            int amountToReload = Mathf.Min(pistolMAG - _pistolMAG, _pistolMAX);
-                            _pistolMAG += amountToReload;
-                            _pistolMAX -= amountToReload;
-                        }
-                        else
-                        {
-                            Debug.Log("SEM BALA");
-                        }
-                        ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
-                    }
-                    break;
-
-                case 2:
-                    if (_rifleMAG < rifleMAG)
-                    {
-                        if (_rifleMAX > 0)
-                        {
-                            int amountToReload = Mathf.Min(rifleMAG - _rifleMAG, _rifleMAX);
-                            _rifleMAG += amountToReload;
-                            _rifleMAX -= amountToReload;
-                        }
-                        else
-                        {
-                            Debug.Log("SEM BALA");
-                        }
-                        ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
-                    }
-                    break;
-
-                case 3:
-                    if (_granadaMAG < granadaMAG)
-                    {
-                        if (_granadaMAX > 0)
-                        {
-                            int amountToReload = Mathf.Min(granadaMAG - _granadaMAG, _granadaMAX);
-                            _granadaMAG += amountToReload;
-                            _granadaMAX -= amountToReload;
-                        }
-                        else
-                        {
-                            Debug.Log("SEM BALA");
-                        }
-                        ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
-                    }
-                    break;
-
-                case 4:
-                    if (_rocketMAG < rocketMAG)
-                    {
-                        if (_rocketMAX > 0)
-                        {
-                            int amountToReload = Mathf.Min(rocketMAG - _rocketMAG, _rocketMAX);
-                            _rocketMAG += amountToReload;
-                            _rocketMAX -= amountToReload;
-                        }
-                        else
-                        {
-                            Debug.Log("SEM BALA");
-                        }
-                        ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
-                    }
-                    break;
-
-                case 5:
-                    if (_doideraMAG < doideraMAG)
-                    {
-                        if (_doideraMAX > 0)
-                        {
-                            int amountToReload = Mathf.Min(doideraMAG - _doideraMAG, _doideraMAX);
-                            _doideraMAG += amountToReload;
-                            _doideraMAX -= amountToReload;
-                        }
-                        else
-                        {
-                            Debug.Log("SEM BALA");
-                        }
-                        ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
-                    }
-                    break;
-            }
+            StartCoroutine(Reload());
         }
-        Reloading = false;
 
-        if (Fired)
+        if (Fired && !Reloading)
         {
             switch (SelectedWeapon)
             {
@@ -287,8 +237,6 @@ public class playerscript : MonoBehaviour
                     }
                     break;
                 case 1:
-                    writeToScreen = "PISTOLA";
-                    ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
                     if (_tiroCL <= 0)
                     {
                         if (_pistolMAG > 0)
@@ -305,8 +253,6 @@ public class playerscript : MonoBehaviour
                     break;
 
                 case 2:
-                    writeToScreen = "RIFLE";
-                    ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
                     if (_tiroCL <= 0)
                     {
                         if(_rifleMAG > 0)
@@ -322,7 +268,6 @@ public class playerscript : MonoBehaviour
                     }
                     break;
                 case 3:
-                    writeToScreen = "GRANDA";
                     if (_tiroCL <= 0)
                     {
                         //atirar(DMG);
@@ -332,8 +277,6 @@ public class playerscript : MonoBehaviour
                     break;
 
                 case 4:
-                    writeToScreen = "ROCKET";
-                    ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
                     if (_tiroCL <= 0)
                     {
                         atirar(rocketDMG);
@@ -345,8 +288,6 @@ public class playerscript : MonoBehaviour
                     }
                     break;
                 case 5:
-                    writeToScreen = "DOIDERA";
-                    ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
                     if (_tiroCL <= 0)
                     {
                         atirar(doideraDMG);
@@ -375,15 +316,18 @@ public class playerscript : MonoBehaviour
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
-            GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TODO:atirar uma vez, esperar o cooldown de cada arma e atirar dnv
-            Destroy(bulletHole, 10f);
-            if (hit.transform.gameObject)
+            if (!hit.collider.gameObject.CompareTag("Enemy"))
             {
+                GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TOD1:atirar uma vez, esperar o cooldown de cada arma e atirar dnv 
+                Destroy(bulletHole, 10f);
+            }
+                //Debug.Log("acertei um gameobject");
                 if (hit.transform.gameObject.GetComponent<EnemyScript>() != null)
                 {
+                    //Debug.Log("ele tem um enemyscript");
                     EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
                     p.HP -= DMG;
-                    if (p.HP <= 0)
+                if (p.HP <= 0)
                     {
                         StartCoroutine(KillScreenEffect());
                         //piscar a tela azul estilo gta
@@ -391,8 +335,11 @@ public class playerscript : MonoBehaviour
                         //90% clareza
                         //desce ate zero
                     }
+                if (p.HP > 0)
+                {
+                    p.LookAtPlayer();
                 }
-            }
+                }
         }
         else
         {
@@ -405,49 +352,168 @@ public class playerscript : MonoBehaviour
     {
         //caso queiramos um efeito quando o jogador esta sem munição e tenta atirar, talvez so um som
     }
+
+    IEnumerator Reload()
+    {
+        switch (SelectedWeapon)
+        {
+            case 0:
+                //inspecionar?
+                break;
+
+            case 1:
+                if (_pistolMAG < pistolMAG)
+                {
+                    yield return new WaitForSeconds(pistolReload);
+                    if (_pistolMAX > 0)
+                    {
+                        int amountToReload = Mathf.Min(pistolMAG - _pistolMAG, _pistolMAX);
+                        _pistolMAG += amountToReload;
+                        _pistolMAX -= amountToReload;
+                    }
+                    else
+                    {
+                        Debug.Log("SEM BALA");
+                    }
+                    ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
+                }
+                break;
+
+            case 2:
+                if (_rifleMAG < rifleMAG)
+                {
+                    yield return new WaitForSeconds(rifleReload);
+                    if (_rifleMAX > 0)
+                    {
+                        int amountToReload = Mathf.Min(rifleMAG - _rifleMAG, _rifleMAX);
+                        _rifleMAG += amountToReload;
+                        _rifleMAX -= amountToReload;
+                    }
+                    else
+                    {
+                        Debug.Log("SEM BALA");
+                    }
+                    ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
+                }
+                break;
+
+            case 3:
+                if (_granadaMAG < granadaMAG)
+                {
+                    yield return new WaitForSeconds(granadaReload);
+                    if (_granadaMAX > 0)
+                    {
+                        int amountToReload = Mathf.Min(granadaMAG - _granadaMAG, _granadaMAX);
+                        _granadaMAG += amountToReload;
+                        _granadaMAX -= amountToReload;
+                    }
+                    else
+                    {
+                        Debug.Log("SEM BALA");
+                    }
+                    ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
+                }
+                break;
+
+            case 4:
+                if (_rocketMAG < rocketMAG)
+                {
+                    yield return new WaitForSeconds(rocketReload);
+                    if (_rocketMAX > 0)
+                    {
+                        int amountToReload = Mathf.Min(rocketMAG - _rocketMAG, _rocketMAX);
+                        _rocketMAG += amountToReload;
+                        _rocketMAX -= amountToReload;
+                    }
+                    else
+                    {
+                        Debug.Log("SEM BALA");
+                    }
+                    ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
+                }
+                break;
+
+            case 5:
+                if (_doideraMAG < doideraMAG)
+                {
+                    yield return new WaitForSeconds(doideraReload);
+                    if (_doideraMAX > 0)
+                    {
+                        int amountToReload = Mathf.Min(doideraMAG - _doideraMAG, _doideraMAX);
+                        _doideraMAG += amountToReload;
+                        _doideraMAX -= amountToReload;
+                    }
+                    else
+                    {
+                        Debug.Log("SEM BALA");
+                    }
+                    ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
+                }
+                break;
+        }
+        Reloading = false;
+    }
+
     IEnumerator KillScreenEffect()
     {
         float t = 0f;
         Color c = KillEffect.color;
-        while (KillEffect.color.a != 0.5f)
-        {
-        t += Time.deltaTime * MultiplierKillEffectSpeed;
-        c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.7f,t /1);
-        KillEffect.color = c;
-        }
-        yield return null;
-        while (KillEffect.color.a != 0f)
-        {
-        t -= Time.deltaTime * MultiplierKillEffectSpeed;
-        c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.7f,t /1);
-        KillEffect.color = c;
-        }
-        yield return null;
-        while (KillEffect.color.a != 0.7f)
-        {
-        t += Time.deltaTime * MultiplierKillEffectSpeed;
-        c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.9f,t /1);
-        KillEffect.color = c;
-        }
-        yield return null;       
-        while (KillEffect.color.a != 0f)
-        {
-        t -= Time.deltaTime * MultiplierKillEffectSpeed;
-        c = KillEffect.color;
-        c.a = Mathf.Lerp(0,0.7f,t /1);
-        KillEffect.color = c;
-        }
-        yield return null;
 
+        //while (KillEffect.color.a < 0.7f)
+        //{
+        //    t += Time.deltaTime * MultiplierKillEffectSpeed;
+        //    c = KillEffect.color;
+        //    c.a = Mathf.Lerp(0, 0.7f, t);
+        //    KillEffect.color = c;
+        //    yield return null;
+        //}
+
+        //t = 0f;
+        //while (KillEffect.color.a > 0f)
+        //{
+        //    t += Time.deltaTime * MultiplierKillEffectSpeed;
+        //    c = KillEffect.color;
+        //    c.a = Mathf.Lerp(0.7f, 0f, t);
+        //    KillEffect.color = c;
+        //    yield return null;
+        //}
+
+        t = 0f;
+        while (KillEffect.color.a < 0.7f)
+        {
+            t += Time.deltaTime * MultiplierKillEffectSpeed;
+            c = KillEffect.color;
+            c.a = Mathf.Lerp(0, 0.9f, t);
+            KillEffect.color = c;
+            yield return null;
+        }
+
+        t = 0f;
+        while (KillEffect.color.a > 0f)
+        {
+            t += Time.deltaTime * MultiplierKillEffectSpeed;
+            c = KillEffect.color;
+            c.a = Mathf.Lerp(0.7f, 0f, t);
+            KillEffect.color = c;
+            yield return null;
+        }
     }
 
     public void takeDamage(int DMG)
     {
         HP -= DMG;
         StartCoroutine(DamageCamera());
+    }
+
+    IEnumerator OverhealBGone()
+    {
+        while(HP > 100)
+        {
+            HP -= 1;
+            yield return new WaitForSeconds(overHealTime);
+        }
+        lifeIsGoingDown = false;
+        yield return null;
     }
 
     IEnumerator DamageCamera()

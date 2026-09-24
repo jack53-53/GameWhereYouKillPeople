@@ -129,11 +129,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca6a3d9fe3be26f44b7296e036925d3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  HP: 3
-  DamageIDeal: 1
-  p: {fileID: 5997525931046463716, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
+  HP: 100
+  DamageIDeal: 5
   speed: 3
-  timeBetweenAttacks: 2
+  timeBetweenAttacks: 0.2
   playerTransform: {fileID: 4732497464173465676, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
   _agent: {fileID: 1032436408738881619}
 --- !u!195 &1032436408738881619
