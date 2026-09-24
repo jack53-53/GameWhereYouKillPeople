@@ -35,9 +35,10 @@ public class EnemyScript : MonoBehaviour
     {
         if (HP <= 0)
         {
+            playerscript p = player.GetComponent <playerscript>();
+            p.StartCoroutine(p.KillScreenEffect());
             Destroy(gameObject);
         }
-        Debug.Log(HP);
         var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
         //Debug.Log(distanceToPlayer);
         if(distanceToPlayer <= detectionRange && canSeePlayer())
@@ -45,7 +46,7 @@ public class EnemyScript : MonoBehaviour
             IsIdle = false;
         }
 
-        if (!IsIdle)
+        if (!IsIdle && HP > 0)
         {
             FollowPlayer();
             if (!canSeePlayer())

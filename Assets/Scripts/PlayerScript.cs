@@ -92,6 +92,7 @@ public class playerscript : MonoBehaviour
     public TextMeshProUGUI ammoTXT;
     private string writeToScreen;
     private bool lifeIsGoingDown;
+    private bool canFire = true;
     
 
     void Start()
@@ -131,6 +132,14 @@ public class playerscript : MonoBehaviour
             Pulou = false;
         }
         _timerBetweenJumps -= Time.deltaTime;
+
+        if (!canFire)
+        {
+            Color c;
+            c = KillEffect.color;
+            c.a = 0.5f;
+            KillEffect.color = c;
+        }
 
         if (Sprayou)
         {
@@ -224,7 +233,7 @@ public class playerscript : MonoBehaviour
             StartCoroutine(Reload());
         }
 
-        if (Fired && !Reloading)
+        if (Fired && !Reloading && canFire)
         {
             switch (SelectedWeapon)
             {
@@ -327,14 +336,14 @@ public class playerscript : MonoBehaviour
                     //Debug.Log("ele tem um enemyscript");
                     EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
                     p.HP -= DMG;
-                if (p.HP <= 0)
-                    {
-                        StartCoroutine(KillScreenEffect());
-                        //piscar a tela azul estilo gta
-                        //70% clareza
-                        //90% clareza
-                        //desce ate zero
-                    }
+                //if (p.HP <= 0)
+                //    {
+                //        StartCoroutine(KillScreenEffect());
+                //        //piscar a tela azul estilo gta
+                //        //70% clareza
+                //        //90% clareza
+                //        //desce ate zero
+                //    }
                 if (p.HP > 0)
                 {
                     p.LookAtPlayer();
@@ -454,7 +463,7 @@ public class playerscript : MonoBehaviour
         Reloading = false;
     }
 
-    IEnumerator KillScreenEffect()
+    public IEnumerator KillScreenEffect()
     {
         float t = 0f;
         Color c = KillEffect.color;
@@ -487,6 +496,7 @@ public class playerscript : MonoBehaviour
             KillEffect.color = c;
             yield return null;
         }
+        yield return new WaitForSeconds(0.3f);
 
         t = 0f;
         while (KillEffect.color.a > 0f)
@@ -602,6 +612,10 @@ public class playerscript : MonoBehaviour
     //{
     //    Fired = e.isPressed; //NÃO TA VOLTANDO A SER FALSE
     //}
+    public void OnCuest(InputValue e)
+    {
+        canFire = e.isPressed;
+    }
 
     public void OnMove(InputValue e)
     {
