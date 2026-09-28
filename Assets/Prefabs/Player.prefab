@@ -147,7 +147,6 @@ GameObject:
   m_Component:
   - component: {fileID: 705347407022261716}
   - component: {fileID: 4449444683954902034}
-  - component: {fileID: 7801097402161907768}
   - component: {fileID: 1961700636057426532}
   m_Layer: 2
   m_Name: Camera (1)
@@ -222,14 +221,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &7801097402161907768
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6351313376069439720}
-  m_Enabled: 1
 --- !u!114 &1961700636057426532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -536,6 +527,15 @@ MonoBehaviour:
   RB: {fileID: 5945511653847656092}
   PlayerCamera: {fileID: 777692557284424425}
   SelectedWeapon: 0
+  palavrasDebug:
+  - RUNNING KILLEVERYONE.ELF
+  - SEARCHING FOR TARGETS
+  - ERROR! CORRUPTION AT 78%
+  - WARNING! STORAGE AT 99% CAPACITY
+  - YOUR DOWNLOAD HAS FINISHED!
+  - HOT MOMS 1KM AWAY!
+  - ARE YOU READY FOR WHATS COMING NEXT?
+  palavrasDebugCL: 0.2
   jumpStrenght: 300
   timeBetweenJumps: 1
   BulletHolePrefab: {fileID: 7260492420778499948, guid: fbfa3424403c59f4caed35407707b90b, type: 3}

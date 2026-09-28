@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -18,6 +19,9 @@ public class playerscript : MonoBehaviour
     public Rigidbody RB;
     public Camera PlayerCamera;
     public int SelectedWeapon; //0 = sem arma, 1 = pistola, 2 = rifle, 3 = granada, 4 = bazooka, 5 = BFG //talvez trocar a granada por uma shotgun?
+    public string[] palavrasDebug;
+    public float palavrasDebugCL;
+    private float _palavrasDebugCL;
 
     private Vector2 Dire;
     public float jumpStrenght = 0f;
@@ -93,7 +97,7 @@ public class playerscript : MonoBehaviour
     private string writeToScreen;
     private bool lifeIsGoingDown;
     private bool canFire = true;
-    
+
 
     void Start()
     {
@@ -118,8 +122,14 @@ public class playerscript : MonoBehaviour
         }
         vidaTXT.text = HP.ToString();
         debugTXT.text = writeToScreen;
-        if (Mouse.current != null)
-            Fired = Mouse.current.leftButton.isPressed;
+        if (Mouse.current != null) //TODO: fazer o mesmo pro comando
+        {
+            Fired = Mouse.current.leftButton.isPressed; //grande merda, tive que usar o sistema antigo
+        }
+        if(Keyboard.current != null)
+        {
+            canFire = !Keyboard.current.cKey.isPressed;
+        }
         if (Pulou)
         {
             //transform.position = new Vector3(transform.position.x, transform.position.y + jumpStrenght, transform.position.z);RaycastHit hit;
@@ -132,14 +142,33 @@ public class playerscript : MonoBehaviour
             Pulou = false;
         }
         _timerBetweenJumps -= Time.deltaTime;
-
+        //Debug.Log(canFire);
         if (!canFire)
         {
             Color c;
             c = KillEffect.color;
             c.a = 0.5f;
             KillEffect.color = c;
+            if(_palavrasDebugCL <= 0)
+            {
+                writeToScreen += "\n" +  palavrasDebug[UnityEngine.Random.Range(0, palavrasDebug.Length)];
+                _palavrasDebugCL = palavrasDebugCL;
+            }
+            //TODO:todos os efeitos de quando o jogador ta perdido
         }
+        else
+        {
+            writeToScreen = "";
+            Color c;
+            c = KillEffect.color;
+            if (c.a > 0f)
+            {
+                c.a = c.a - 0.01f;
+                KillEffect.color = c;
+            }
+        }
+
+        _palavrasDebugCL -= Time.deltaTime;
 
         if (Sprayou)
         {
@@ -155,27 +184,27 @@ public class playerscript : MonoBehaviour
         switch (SelectedWeapon)
         {
             case 1:
-                writeToScreen = "PISTOLA";
+                //writeToScreen = "PISTOLA";
                 ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
                 break;
             case 2:
-                writeToScreen = "RIFLE";
+                //writeToScreen = "RIFLE";
                 ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
                 break;
             case 3:
-                writeToScreen = "GRANADA";
+                //writeToScreen = "GRANADA";
                 ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
                 break;
             case 4:
-                writeToScreen = "ROCKET";
+                //writeToScreen = "ROCKET";
                 ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
                 break;
             case 5:
-                writeToScreen = "DOIDERA";
+                //writeToScreen = "DOIDERA";
                 ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
                 break;
             case 0:
-                writeToScreen = "MELEE";
+                //writeToScreen = "MELEE";
                 break;
         }
     }
@@ -238,7 +267,7 @@ public class playerscript : MonoBehaviour
             switch (SelectedWeapon)
             {
                 case 0:
-                    writeToScreen = "MELEE";
+                    //writeToScreen = "MELEE";
                     if (_tiroCL <= 0)
                     {
                         atirar(meleeDMG);
@@ -605,17 +634,17 @@ public class playerscript : MonoBehaviour
     public void OnReload(InputValue e)
     {
         Reloading = e.isPressed;
-        Debug.Log("tentando recaregar");
+        //Debug.Log("tentando recaregar");
     }
 
     //public void OnAttack(InputValue e)
     //{
     //    Fired = e.isPressed; //NÃO TA VOLTANDO A SER FALSE
     //}
-    public void OnCuest(InputValue e)
-    {
-        canFire = e.isPressed;
-    }
+    //public void OnCuest(InputValue e)
+    //{
+    //    canFire = e.isPressed;
+    //}
 
     public void OnMove(InputValue e)
     {
