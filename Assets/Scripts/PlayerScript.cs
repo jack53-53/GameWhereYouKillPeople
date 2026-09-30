@@ -377,6 +377,11 @@ public class playerscript : MonoBehaviour
                 {
                     p.LookAtPlayer();
                 }
+                if (hit.transform.gameObject.GetComponent<BreakableScript>() != null)
+                {
+                    BreakableScript b = hit.transform.gameObject.GetComponent<BreakableScript>();
+                    b.HP -= DMG;
+                }
                 }
         }
         else
@@ -494,6 +499,7 @@ public class playerscript : MonoBehaviour
 
     public IEnumerator KillScreenEffect()
     {
+        //Debug.Log("EFEITO");
         float t = 0f;
         Color c = KillEffect.color;
 
