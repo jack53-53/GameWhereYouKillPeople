@@ -17,7 +17,7 @@ public class EnemyScript : MonoBehaviour
     private float viewAngle = 90f;
     private float losePlayerTime = 3f;
     private bool IsIdle = true;
-    private bool Atacou;
+    //private bool Atacou;
     private GameObject player;
     private float _timeSinceLostPlayer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -62,7 +62,7 @@ public class EnemyScript : MonoBehaviour
             {
                 _timeSinceLostPlayer = 0f;
             }
-            if (_timeBetweenAttacks < 0)
+            if (_timeBetweenAttacks < 0 && canSeePlayer() && !IsIdle)
             {
                 _speed = 0;
                 _agent.speed = _speed;

@@ -22,7 +22,6 @@ public class playerscript : MonoBehaviour
     public string[] palavrasDebug;
     public float palavrasDebugCL;
     private float _palavrasDebugCL;
-
     private Vector2 Dire;
     public float jumpStrenght = 0f;
     public float timeBetweenJumps = 0f;
@@ -91,16 +90,30 @@ public class playerscript : MonoBehaviour
     public float granadaReload;
     public float rocketReload;
     public float doideraReload;
+    [Header("Modelo do viewmodel de cada arma")]
+    public GameObject MeleeModel;
+    public GameObject PistolModel;
+    public GameObject RifleModel;
+    public GameObject GranadaModel;
+    public GameObject RocketModel;
+    public GameObject DoideraModel;
+
     public TextMeshProUGUI debugTXT;
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
+    public TextMeshProUGUI _fpsText;
+    private float updateInterval = 1.0f;
+
+    private float _currentFPS;
     private string writeToScreen;
     private bool lifeIsGoingDown;
     private bool canFire = true;
+    private float count;
 
 
     void Start()
     {
+        _fpsText.text = "FPS: 0";
         layerMask = LayerMask.GetMask("Default");
         Color color = KillEffect.color;
         color.a = 0f;
@@ -115,11 +128,8 @@ public class playerscript : MonoBehaviour
 
     void Update()
     {
-        if(HP > 100 && !lifeIsGoingDown)
-        {
-            lifeIsGoingDown = true;
-            StartCoroutine(OverhealBGone());
-        }
+        _currentFPS = 1f / Time.deltaTime;
+        UpdateFPS();
         vidaTXT.text = HP.ToString();
         debugTXT.text = writeToScreen;
         if (Mouse.current != null) //TODO: fazer o mesmo pro comando
@@ -183,28 +193,64 @@ public class playerscript : MonoBehaviour
         }
         switch (SelectedWeapon)
         {
+            case 0:
+                MeleeModel.SetActive(true); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                RifleModel.SetActive(false);
+                GranadaModel.SetActive(false);
+                RocketModel.SetActive(false);
+                DoideraModel.SetActive(false);
+                ammoTXT.text = "";
+                break;
             case 1:
                 //writeToScreen = "PISTOLA";
+                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                PistolModel.SetActive(true); //I SWEAR IM NOT YANDERE DEV
+                RifleModel.SetActive(false);
+                GranadaModel.SetActive(false);
+                RocketModel.SetActive(false);
+                DoideraModel.SetActive(false);
                 ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
                 break;
             case 2:
+                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                RifleModel.SetActive(true);
+                GranadaModel.SetActive(false);
+                RocketModel.SetActive(false);
+                DoideraModel.SetActive(false);
                 //writeToScreen = "RIFLE";
                 ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
                 break;
             case 3:
+                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                RifleModel.SetActive(false);
+                GranadaModel.SetActive(true);
+                RocketModel.SetActive(false);
+                DoideraModel.SetActive(false);
                 //writeToScreen = "GRANADA";
                 ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
                 break;
             case 4:
+                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                RifleModel.SetActive(false);
+                GranadaModel.SetActive(false);
+                RocketModel.SetActive(true);
+                DoideraModel.SetActive(false);
                 //writeToScreen = "ROCKET";
                 ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
                 break;
             case 5:
+                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                RifleModel.SetActive(false);
+                GranadaModel.SetActive(false);
+                RocketModel.SetActive(false);
+                DoideraModel.SetActive(true);
                 //writeToScreen = "DOIDERA";
                 ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
-                break;
-            case 0:
-                //writeToScreen = "MELEE";
                 break;
         }
     }
@@ -497,6 +543,10 @@ public class playerscript : MonoBehaviour
         Reloading = false;
     }
 
+    private void UpdateFPS()
+    {
+        _fpsText.text = "Curr FPS: " + Mathf.RoundToInt(_currentFPS);
+    }
     public IEnumerator KillScreenEffect()
     {
         //Debug.Log("EFEITO");
