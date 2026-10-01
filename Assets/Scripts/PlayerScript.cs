@@ -106,7 +106,7 @@ public class playerscript : MonoBehaviour
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
     public TextMeshProUGUI _fpsText;
-
+    private int _lastHP = -1;
     private float updateInterval = 1.0f;
     private float _currentFPS;
     private string writeToScreen;
@@ -123,24 +123,28 @@ public class playerscript : MonoBehaviour
         color.a = 0f;
         KillEffect.color = color;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-         _pistolMAG = pistolMAG;
-    _rifleMAG = rifleMAG;
-    _granadaMAG = granadaMAG;
-    _rocketMAG = rocketMAG;
-    _doideraMAG = doideraMAG;
-}
+        _pistolMAG = pistolMAG;
+        _rifleMAG = rifleMAG;
+        _granadaMAG = granadaMAG;
+        _rocketMAG = rocketMAG;
+        _doideraMAG = doideraMAG;
+    }
 
     void Update()
     {
         _currentFPS = 1f / Time.deltaTime;
         UpdateFPS();
+        if (HP != _lastHP)
+        { 
         vidaTXT.text = HP.ToString();
+         _lastHP = HP; 
+         }
         debugTXT.text = writeToScreen;
         if (Mouse.current != null) //TODO: fazer o mesmo pro comando
         {
             Fired = Mouse.current.leftButton.isPressed; //grande merda, tive que usar o sistema antigo
         }
-        if(Keyboard.current != null)
+        if (Keyboard.current != null)
         {
             canFire = !Keyboard.current.cKey.isPressed;
         }
@@ -164,7 +168,7 @@ public class playerscript : MonoBehaviour
             c = KillEffect.color;
             c.a = 0.5f;
             KillEffect.color = c;
-            if(_palavrasDebugCL <= 0)
+            if (_palavrasDebugCL <= 0)
             {
                 foreach (char character in writeToScreen)
                 {
@@ -173,7 +177,7 @@ public class playerscript : MonoBehaviour
                         a++;
                     }
                 }
-                writeToScreen += "\n" +  palavrasDebug[UnityEngine.Random.Range(0, palavrasDebug.Length)];
+                writeToScreen += "\n" + palavrasDebug[UnityEngine.Random.Range(0, palavrasDebug.Length)];
                 _palavrasDebugCL = palavrasDebugCL;
             }
             if (a >= linhasDePalavrasNaTelaDurantePoder)
@@ -199,10 +203,10 @@ public class playerscript : MonoBehaviour
         if (Sprayou)
         {
             RaycastHit hit;
-            if(Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
+            if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
             {
-                Quaternion rotation = Quaternion.FromToRotation(Vector3.up,hit.normal);
-                GameObject SprayPng = Instantiate(SprayPrefab,hit.point + hit.normal * 0.001f,rotation);
+                Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                GameObject SprayPng = Instantiate(SprayPrefab, hit.point + hit.normal * 0.001f, rotation);
                 // Destroy(SprayPng);
             }
             Sprayou = false;
@@ -319,10 +323,6 @@ public class playerscript : MonoBehaviour
 
         transform.Rotate(Vector3.up * Look.x * Sens);
 
-        if (Reloading)
-        {
-            StartCoroutine(Reload());
-        }
 
         if (Fired && !Reloading && canFire)
         {
@@ -347,7 +347,7 @@ public class playerscript : MonoBehaviour
                         }
                         else
                         {
-                            Reloading = true;
+                            TryReload();
                         }
                     }
                     break;
@@ -355,7 +355,7 @@ public class playerscript : MonoBehaviour
                 case 2:
                     if (_tiroCL <= 0)
                     {
-                        if(_rifleMAG > 0)
+                        if (_rifleMAG > 0)
                         {
                             atirar(rifleDMG);
                             _tiroCL = rifleCL;
@@ -363,57 +363,69 @@ public class playerscript : MonoBehaviour
                         }
                         else
                         {
-                            Reloading = true;
+                            TryReload();
                         }
                     }
                     break;
                 case 3:
                     if (_tiroCL <= 0)
                     {
-                        if(_granadaMAG > 0)
+                        if (_granadaMAG > 0)
                         {
                             Instantiate(granadaPrefab, placeToSpawnStuff.position, Quaternion.identity);
                             _tiroCL = grandaCL;
+                            _granadaMAG--;
                         }
-                        else { Reloading = true; }
+                        else
+                        {
+                            TryReload();
+                        }
                     }
                     break;
-
                 case 4:
                     if (_tiroCL <= 0)
                     {
-                        Instantiate(RocketPrefab,placeToSpawnStuff.position,PlayerCamera.transform.rotation);
-                        _tiroCL = rocketCL;
-                    }
-                    else
-                    {
-                        Reloading = true;
+                        if (_rocketMAG > 0)
+                        {
+                            Instantiate(RocketPrefab, placeToSpawnStuff.position, PlayerCamera.transform.rotation);
+                            _tiroCL = rocketCL;
+                            _rocketMAG--;
+                        }
+                        else
+                        {
+                            TryReload();
+                        }
                     }
                     break;
                 case 5:
                     if (_tiroCL <= 0)
                     {
-                        atirar(doideraDMG);
-                        _tiroCL = doideraCL;
-                    }
-                    else
-                    {
-                        Reloading = true;
+                        if (_doideraMAG > 0)
+                        {
+                            atirar(doideraDMG);
+                            _tiroCL = doideraCL;
+                            _doideraMAG--;
+
+                        }
+                        else
+                        {
+                            TryReload();
+                        }
                     }
                     break;
             }
-            }
         }
-        //else
-        //{
-        //    Debug.DrawRay(
-        //        PlayerCamera.transform.position,
-        //        PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000,
-        //        Color.white
-        //    );
-        //}
-        private void atirar(int DMG)
-        {
+    }
+    //else
+    //{
+    //    Debug.DrawRay(
+    //        PlayerCamera.transform.position,
+    //        PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000,
+    //        Color.white
+    //    );
+    //}
+    private void atirar(int DMG)
+    {
         RaycastHit hit;
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
         {
@@ -424,12 +436,12 @@ public class playerscript : MonoBehaviour
                 GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TOD1:atirar uma vez, esperar o cooldown de cada arma e atirar dnv 
                 Destroy(bulletHole, 10f);
             }
-                //Debug.Log("acertei um gameobject");
-                if (hit.transform.gameObject.GetComponent<EnemyScript>() != null)
-                {
-                    //Debug.Log("ele tem um enemyscript");
-                    EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
-                    p.HP -= DMG;
+            //Debug.Log("acertei um gameobject");
+            if (hit.transform.gameObject.GetComponent<EnemyScript>() != null)
+            {
+                //Debug.Log("ele tem um enemyscript");
+                EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
+                p.HP -= DMG;
                 //if (p.HP <= 0)
                 //    {
                 //        StartCoroutine(KillScreenEffect());
@@ -447,7 +459,7 @@ public class playerscript : MonoBehaviour
                     BreakableScript b = hit.transform.gameObject.GetComponent<BreakableScript>();
                     b.HP -= DMG;
                 }
-                }
+            }
         }
         else
         {
@@ -455,6 +467,12 @@ public class playerscript : MonoBehaviour
         }
     }
 
+    void TryReload()
+    {
+        if (Reloading) return;
+        Reloading = true;
+        StartCoroutine(Reload());
+    }
 
     private void EfeitoNoAmmo()
     {
@@ -621,7 +639,7 @@ public class playerscript : MonoBehaviour
 
     IEnumerator OverhealBGone()
     {
-        while(HP > 100)
+        while (HP > 100)
         {
             HP -= 1;
             yield return new WaitForSeconds(overHealTime);
@@ -636,7 +654,7 @@ public class playerscript : MonoBehaviour
         float duration = 0.01f;
         float timer = 0f;
         float _cameraPitch = cameraPitch;
-        
+
 
         float startingRoll = cameraPitch;
 
@@ -708,7 +726,10 @@ public class playerscript : MonoBehaviour
 
     public void OnReload(InputValue e)
     {
-        Reloading = e.isPressed;
+        if (e.isPressed)
+        {
+            TryReload();
+        }
         //Debug.Log("tentando recaregar");
     }
 

@@ -1165,7 +1165,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6829498821806044786}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e3d5b88e697e4444f8c218a0a1a67936, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1989,27 +1989,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 15
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 15
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 15
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.501
+      value: 0.655
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.33
+      value: -0.555
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.845
+      value: 1.723
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec901b9b884521e43afae3f65716bcdb, type: 3}
       propertyPath: m_LocalRotation.w
