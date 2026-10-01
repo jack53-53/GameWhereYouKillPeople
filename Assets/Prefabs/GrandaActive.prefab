@@ -113,7 +113,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -133,3 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a5b5eaf8d18ef140a1e0d4aecf0f04b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  DMG: 70
+  RB: {fileID: 5797395362761581684}
+  TempoDet: 4
+  radius: 10
+  power: 100
+  upwardsModifier: 50
+  forceMode: 1

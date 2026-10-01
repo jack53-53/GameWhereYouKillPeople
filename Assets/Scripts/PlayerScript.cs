@@ -33,6 +33,7 @@ public class playerscript : MonoBehaviour
     public GameObject BulletHolePrefab;
     public GameObject SprayPrefab;
     private float cameraRoll = 0f;
+    public int linhasDePalavrasNaTelaDurantePoder;
 
     private float cameraPitch;
     [Tooltip("quem o jogador CONSEGUE dar dano")]
@@ -43,6 +44,8 @@ public class playerscript : MonoBehaviour
     private bool Sprayou;
     [Tooltip("tempo que demora pra cada 1 de vida descer quando vc tem demais")]
     public float overHealTime;
+    public GameObject granadaPrefab;
+    public GameObject RocketPrefab;
     [Header("COOLDOWN ENTRE TIROS DE CADA ARMA")]
     public float meleeCL;
     public float pistolaCL;
@@ -97,13 +100,14 @@ public class playerscript : MonoBehaviour
     public GameObject GranadaModel;
     public GameObject RocketModel;
     public GameObject DoideraModel;
+    public Transform placeToSpawnStuff;
 
     public TextMeshProUGUI debugTXT;
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
     public TextMeshProUGUI _fpsText;
-    private float updateInterval = 1.0f;
 
+    private float updateInterval = 1.0f;
     private float _currentFPS;
     private string writeToScreen;
     private bool lifeIsGoingDown;
@@ -155,14 +159,26 @@ public class playerscript : MonoBehaviour
         //Debug.Log(canFire);
         if (!canFire)
         {
+            int a = 0;
             Color c;
             c = KillEffect.color;
             c.a = 0.5f;
             KillEffect.color = c;
             if(_palavrasDebugCL <= 0)
             {
+                foreach (char character in writeToScreen)
+                {
+                    if (character == '\n')
+                    {
+                        a++;
+                    }
+                }
                 writeToScreen += "\n" +  palavrasDebug[UnityEngine.Random.Range(0, palavrasDebug.Length)];
                 _palavrasDebugCL = palavrasDebugCL;
+            }
+            if (a >= linhasDePalavrasNaTelaDurantePoder)
+            {
+                writeToScreen = "";
             }
             //TODO:todos os efeitos de quando o jogador ta perdido
         }
@@ -354,16 +370,19 @@ public class playerscript : MonoBehaviour
                 case 3:
                     if (_tiroCL <= 0)
                     {
-                        //atirar(DMG);
-                        //_tiroCL = grandaCL;
-                        //TODO:SPAWNAR PREFAB GRANADA
+                        if(_granadaMAG > 0)
+                        {
+                            Instantiate(granadaPrefab, placeToSpawnStuff.position, Quaternion.identity);
+                            _tiroCL = grandaCL;
+                        }
+                        else { Reloading = true; }
                     }
                     break;
 
                 case 4:
                     if (_tiroCL <= 0)
                     {
-                        atirar(rocketDMG);
+                        Instantiate(RocketPrefab,placeToSpawnStuff.position,PlayerCamera.transform.rotation);
                         _tiroCL = rocketCL;
                     }
                     else

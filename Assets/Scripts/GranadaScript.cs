@@ -6,47 +6,69 @@ public class GranadaScript : MonoBehaviour
     public float DMG;
     public Rigidbody RB;
     public float TempoDet;
-    [Header("Explosion Settings")]
     public float radius = 5.0f;
     public float power = 10.0f;
     public float upwardsModifier = 3.0f;
-    public ForceMode forceMode = ForceMode.Force;
+    public ForceMode forceMode = ForceMode.Impulse;
 
-    [Header("Optional Settings")]
-    public LayerMask affectedLayers = ~0; // All layers by default
+    private void Start()
+    {
+        RB.AddForce(Vector3.forward * Time.deltaTime * upwardsModifier, ForceMode.Impulse);
+        //transform.Translate(Vector3.forward * Time.deltaTime * upwardsModifier, Space.Self);
+    }
 
     void Update()
     {
-        ApplyExplosionForce();
+        if (TempoDet <= 0)
+        {
+            ApplyExplosionForce();
+        //TODO: falta o efeito da explosao
+            Destroy(gameObject);
+        }
+        TempoDet -= Time.deltaTime;
     }
 
     public void ApplyExplosionForce()
     {
         Vector3 explosionPosition = transform.position;
-        Collider[] colliders = Physics.OverlapSphere(explosionPosition, radius, affectedLayers);
+
+        Collider[] colliders = Physics.OverlapSphere(explosionPosition,radius);
 
         foreach (Collider collider in colliders)
         {
-            if (collider.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            Rigidbody rb = collider.GetComponentInParent<Rigidbody>();
+
+            if (rb != null && !rb.isKinematic)
             {
-                rb.AddExplosionForce(power, explosionPosition, radius, upwardsModifier, forceMode);
+                rb.AddExplosionForce(power,explosionPosition,radius,upwardsModifier, forceMode);
             }
-            if(collider.TryGetComponent<playerscript>(out playerscript p)){
-                float dstc = Vector3.Distance(collider.gameObject.transform.position, rb.position);
-                p.HP -= Mathf.Round(Mathf.Lerp(DMG, 0f, dstc));
-            }
-            if(collider.TryGetComponent<EnemyScript>(out EnemyScript e))
+
+            playerscript p = collider.GetComponentInParent<playerscript>();
+
+            if (p != null)
             {
-                e.HP -= DMG;
+                float dstc = Vector3.Distance(explosionPosition, p.transform.position );
+
+                p.HP -= (int)Mathf.Round(Mathf.Lerp(DMG, 0f, dstc / radius));
+            }
+
+            EnemyScript e = collider.GetComponentInParent<EnemyScript>();
+
+            if (e != null)
+            {
+                float dstc = Vector3.Distance(explosionPosition, e.transform.position );
+
+                e.HP -= (int)Mathf.Round( Mathf.Lerp(DMG, 0f, dstc / radius));
+            }
+
+            BreakableScript b = collider.GetComponentInParent<BreakableScript>();
+
+            if (b != null)
+            {
+                float dstc = Vector3.Distance( explosionPosition, b.transform.position);
+
+                b.HP -= (int)Mathf.Round( Mathf.Lerp(DMG, 0f, dstc / radius) );
             }
         }
     }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
-        Gizmos.DrawWireSphere(transform.position, radius);
-    }
-
-
 }
