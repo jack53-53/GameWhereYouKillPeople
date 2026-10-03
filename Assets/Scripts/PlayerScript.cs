@@ -33,6 +33,11 @@ public class playerscript : MonoBehaviour
     public GameObject BulletHolePrefab;
     public GameObject SprayPrefab;
     private float cameraRoll = 0f;
+    public float localXCameraBreath;
+    public float localYCameraBreath;
+    private float _localXCameraBreath;
+    private float _localYCameraBreath;
+    private bool indoPraEsquerda;
     public int linhasDePalavrasNaTelaDurantePoder;
 
     private float cameraPitch;
@@ -128,6 +133,8 @@ public class playerscript : MonoBehaviour
         _granadaMAG = granadaMAG;
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
+        _localXCameraBreath = localXCameraBreath;
+        _localYCameraBreath = localYCameraBreath;
     }
 
     void Update()
@@ -196,6 +203,36 @@ public class playerscript : MonoBehaviour
                 c.a = c.a - 0.01f;
                 KillEffect.color = c;
             }
+        }
+
+                float targetRoll = -Dire.x * 7f;
+
+        //coisos da camera
+        if (Dire.x > 0)
+        {
+            targetRoll = -7f;
+        }
+        else if (Dire.x < 0)
+        {
+            targetRoll = 7f;
+        }
+        else if(Dire.x == 0)
+        {
+            //camera sobe pra esquerda, volta pro meio e depois sobre pra direita
+            if (indoPraEsquerda)
+            {
+                //acho que tem que fazer um inumerator, to com muita preguiça
+            }
+        }
+
+        if (cameraRoll != targetRoll)
+        {
+            t = Time.deltaTime * 1;
+            cameraRoll = Mathf.Lerp(cameraRoll, targetRoll, t * 8f);
+        }
+        else
+        {
+            t = 0f;
         }
 
         _palavrasDebugCL -= Time.deltaTime;
@@ -294,27 +331,7 @@ public class playerscript : MonoBehaviour
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
 
-        float targetRoll = -Dire.x * 7f;
 
-
-        if (Dire.x > 0)
-        {
-            targetRoll = -7f;
-        }
-        else if (Dire.x < 0)
-        {
-            targetRoll = 7f;
-        }
-
-        if (cameraRoll != targetRoll)
-        {
-            t = Time.deltaTime * 1;
-            cameraRoll = Mathf.Lerp(cameraRoll, targetRoll, t * 8f);
-        }
-        else
-        {
-            t = 0f;
-        }
         //Debug.Log("cooldown tiro:" + _tiroCL );
         //Debug.Log("atirando?:" + Fired.ToString() );
 
