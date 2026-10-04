@@ -202,6 +202,78 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1671540576280342491
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 487423008428592679}
+  - component: {fileID: 5406235579435243921}
+  - component: {fileID: 3417639699710286543}
+  m_Layer: 5
+  m_Name: SKULL
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &487423008428592679
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671540576280342491}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7983854316068533561}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 56.566, y: 25.705}
+  m_SizeDelta: {x: 966.448, y: 953.41}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5406235579435243921
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671540576280342491}
+  m_CullTransparentMesh: 1
+--- !u!114 &3417639699710286543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671540576280342491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: 6873680c4cbe41a4480341614db8f929, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!1 &2769808875553627111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,6 +1405,7 @@ MonoBehaviour:
   DMG: 1
   KillEffect: {fileID: 8706711082723717639}
   MultiplierKillEffectSpeed: 50
+  SkullEffectSpeed: 1
   RB: {fileID: 5945511653847656092}
   PlayerCamera: {fileID: 777692557284424425}
   SelectedWeapon: 1
@@ -1364,6 +1437,8 @@ MonoBehaviour:
   timeBetweenJumps: 1
   BulletHolePrefab: {fileID: 7260492420778499948, guid: fbfa3424403c59f4caed35407707b90b, type: 3}
   SprayPrefab: {fileID: 7978275602769355988, guid: 7ed3055ad562fd144b047e5639ac1eb5, type: 3}
+  localXCameraBreath: 0
+  localYCameraBreath: 0
   linhasDePalavrasNaTelaDurantePoder: 4
   layerMask:
     serializedVersion: 2
@@ -1414,6 +1489,7 @@ MonoBehaviour:
   vidaTXT: {fileID: 8649045819238793932}
   ammoTXT: {fileID: 4276364272372885995}
   _fpsText: {fileID: 4470041626333756447}
+  SKULL: {fileID: 3417639699710286543}
 --- !u!54 &5945511653847656092
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1478,6 +1554,7 @@ RectTransform:
   - {fileID: 754277800688952441}
   - {fileID: 951625101571994292}
   - {fileID: 2879752896021023608}
+  - {fileID: 487423008428592679}
   m_Father: {fileID: 4732497464173465676}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

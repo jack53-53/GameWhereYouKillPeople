@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class EnemyScript : MonoBehaviour
@@ -36,7 +37,9 @@ public class EnemyScript : MonoBehaviour
         if (HP <= 0)
         {
             playerscript p = player.GetComponent <playerscript>();
-            p.StartCoroutine(p.KillScreenEffect());
+            RawImage r = p.KillEffect;
+            float mult = p.MultiplierKillEffectSpeed;
+            p.StartCoroutine(p.KillScreenEffect(r, mult));
             Destroy(gameObject);
         }
         var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);

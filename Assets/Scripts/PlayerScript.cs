@@ -15,6 +15,7 @@ public class playerscript : MonoBehaviour
     public int DMG;
     public RawImage KillEffect;
     public float MultiplierKillEffectSpeed;
+    public float SkullEffectSpeed;
 
     public Rigidbody RB;
     public Camera PlayerCamera;
@@ -111,6 +112,8 @@ public class playerscript : MonoBehaviour
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
     public TextMeshProUGUI _fpsText;
+    public RawImage SKULL;
+    private bool hasPlayedSkull = false;
     private int _lastHP = -1;
     private float updateInterval = 1.0f;
     private float _currentFPS;
@@ -168,6 +171,19 @@ public class playerscript : MonoBehaviour
         }
         _timerBetweenJumps -= Time.deltaTime;
         //Debug.Log(canFire);
+        Debug.Log(hasPlayedSkull);
+        if(HP < 20 && !hasPlayedSkull)
+        {
+            Debug.Log("tentando tocar efeito");
+            StartCoroutine(KillScreenEffect(SKULL, SkullEffectSpeed));
+            hasPlayedSkull = true;
+        }
+        else if(HP >= 60 && hasPlayedSkull)
+        {
+            Debug.Log("Se curou");
+            hasPlayedSkull = false;
+        }
+
         if (!canFire)
         {
             int a = 0;
@@ -222,6 +238,7 @@ public class playerscript : MonoBehaviour
             if (indoPraEsquerda)
             {
                 //acho que tem que fazer um inumerator, to com muita preguiça
+                //TODO: fica pra amanha dnv
             }
         }
 
@@ -601,11 +618,11 @@ public class playerscript : MonoBehaviour
     {
         _fpsText.text = "Curr FPS: " + Mathf.RoundToInt(_currentFPS);
     }
-    public IEnumerator KillScreenEffect()
+    public IEnumerator KillScreenEffect(RawImage r, float Mult)
     {
         //Debug.Log("EFEITO");
         float t = 0f;
-        Color c = KillEffect.color;
+        Color c = r.color;
 
         //while (KillEffect.color.a < 0.7f)
         //{
@@ -627,23 +644,23 @@ public class playerscript : MonoBehaviour
         //}
 
         t = 0f;
-        while (KillEffect.color.a < 0.7f)
+        while (r.color.a < 0.7f)
         {
-            t += Time.deltaTime * MultiplierKillEffectSpeed;
-            c = KillEffect.color;
+            t += Time.deltaTime * Mult;
+            c = r.color;
             c.a = Mathf.Lerp(0, 0.9f, t);
-            KillEffect.color = c;
+            r.color = c;
             yield return null;
         }
         yield return new WaitForSeconds(0.3f);
 
         t = 0f;
-        while (KillEffect.color.a > 0f)
+        while (r.color.a > 0f)
         {
-            t += Time.deltaTime * MultiplierKillEffectSpeed;
-            c = KillEffect.color;
+            t += Time.deltaTime * Mult;
+            c = r.color;
             c.a = Mathf.Lerp(0.7f, 0f, t);
-            KillEffect.color = c;
+            r.color = c;
             yield return null;
         }
     }
