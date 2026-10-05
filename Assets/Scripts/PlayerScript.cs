@@ -1,4 +1,5 @@
 using System.Collections;
+using NUnit.Framework.Constraints;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -34,11 +35,14 @@ public class playerscript : MonoBehaviour
     public GameObject BulletHolePrefab;
     public GameObject SprayPrefab;
     private float cameraRoll = 0f;
-    public float localXCameraBreath;
-    public float localYCameraBreath;
-    private float _localXCameraBreath;
-    private float _localYCameraBreath;
-    private bool indoPraEsquerda;
+    public float bobSpeed = 5f;
+    public float bobAmmount = 1f;
+
+    // public float localXCameraBreath;
+    // public float localYCameraBreath;
+    // private float _localXCameraBreath;
+    // private float _localYCameraBreath;
+    // private bool indoPraEsquerda;
     public int linhasDePalavrasNaTelaDurantePoder;
 
     private float cameraPitch;
@@ -107,6 +111,13 @@ public class playerscript : MonoBehaviour
     public GameObject RocketModel;
     public GameObject DoideraModel;
     public Transform placeToSpawnStuff;
+    [Header("Local da onde o muzzle vai aparecer")]
+    public Transform PistolMuzzle;
+    public Transform RifleMuzzle;
+    public Transform RocketMuzzle;
+    public Transform DoideraMuzzle;
+    [Header("SE TIVER DIFERENTES PNGS PRA ARMA TEM QUE FICAR AQ")]
+    public GameObject MuzzlePrefab;
 
     public TextMeshProUGUI debugTXT;
     public TextMeshProUGUI vidaTXT;
@@ -136,8 +147,8 @@ public class playerscript : MonoBehaviour
         _granadaMAG = granadaMAG;
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
-        _localXCameraBreath = localXCameraBreath;
-        _localYCameraBreath = localYCameraBreath;
+        // _localXCameraBreath = localXCameraBreath;
+        // _localYCameraBreath = localYCameraBreath;
     }
 
     void Update()
@@ -149,6 +160,10 @@ public class playerscript : MonoBehaviour
         vidaTXT.text = HP.ToString();
          _lastHP = HP; 
          }
+        if(HP > 100 && !lifeIsGoingDown)
+        {
+            StartCoroutine(OverhealBGone());
+        }
         debugTXT.text = writeToScreen;
         if (Mouse.current != null) //TODO: fazer o mesmo pro comando
         {
@@ -171,10 +186,10 @@ public class playerscript : MonoBehaviour
         }
         _timerBetweenJumps -= Time.deltaTime;
         //Debug.Log(canFire);
-        Debug.Log(hasPlayedSkull);
+        // Debug.Log(hasPlayedSkull);
         if(HP < 20 && !hasPlayedSkull)
         {
-            Debug.Log("tentando tocar efeito");
+            // Debug.Log("tentando tocar efeito");
             StartCoroutine(KillScreenEffect(SKULL, SkullEffectSpeed));
             hasPlayedSkull = true;
         }
@@ -232,15 +247,21 @@ public class playerscript : MonoBehaviour
         {
             targetRoll = 7f;
         }
-        else if(Dire.x == 0)
-        {
-            //camera sobe pra esquerda, volta pro meio e depois sobre pra direita
-            if (indoPraEsquerda)
-            {
-                //acho que tem que fazer um inumerator, to com muita preguiça
-                //TODO: fica pra amanha dnv
-            }
-        }
+        // else if(Dire.x == 0) //scrap nisso
+        // {
+        //     //camera sobe pra esquerda, volta pro meio e depois sobre pra direita
+        //     if (indoPraEsquerda)
+        //     {
+        //         //acho que tem que fazer um inumerator, to com muita preguiça
+        //         //TODO: fica pra amanha dnv
+        //     }
+        // }
+        cameraPitch -= Look.y * Sens;
+        cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
+
+        float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
+
+        PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + bob, 0f, cameraRoll);
 
         if (cameraRoll != targetRoll)
         {
@@ -332,28 +353,14 @@ public class playerscript : MonoBehaviour
     void FixedUpdate()
     {
         _tiroCL -= Time.fixedDeltaTime;
-        Vector3 move =
-            transform.right * Dire.x +
-            transform.forward * Dire.y;
+        Vector3 move = transform.right * Dire.x + transform.forward * Dire.y;
 
         Vector3 velocity = RB.linearVelocity;
 
-        RB.linearVelocity = new Vector3(
-            move.x * Speed,
-            velocity.y,
-            move.z * Speed
-        );
-
-        cameraPitch -= Look.y * Sens;
-        cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
-
-
+        RB.linearVelocity = new Vector3(move.x * Speed, velocity.y, move.z * Speed);
 
         //Debug.Log("cooldown tiro:" + _tiroCL );
         //Debug.Log("atirando?:" + Fired.ToString() );
-
-        PlayerCamera.transform.localRotation =
-            Quaternion.Euler(cameraPitch, 0f, cameraRoll);
 
         transform.Rotate(Vector3.up * Look.x * Sens);
 
@@ -392,6 +399,9 @@ public class playerscript : MonoBehaviour
                         if (_rifleMAG > 0)
                         {
                             atirar(rifleDMG);
+                            Quaternion rot = RifleMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);;
+                            GameObject muzzle = Instantiate(MuzzlePrefab, RifleMuzzle.position, rot, RifleMuzzle);
+                            Destroy(muzzle, rifleCL);
                             _tiroCL = rifleCL;
                             _rifleMAG--;
                         }
@@ -696,11 +706,7 @@ public class playerscript : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            cameraPitch = Mathf.Lerp(
-                startingRoll,
-                targetRoll,
-                timer / duration
-            );
+            cameraPitch = Mathf.Lerp(startingRoll,targetRoll,timer / duration);
 
             yield return null;
         }
@@ -721,11 +727,7 @@ public class playerscript : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            cameraPitch = Mathf.Lerp(
-                startingRoll,
-                targetRoll,
-                timer / duration
-            );
+            cameraPitch = Mathf.Lerp(startingRoll, targetRoll, timer / duration);
 
             yield return null;
         }
