@@ -159,6 +159,7 @@ MonoBehaviour:
   PlayerTransform: {fileID: 4732497464173465676, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
   Speed: 20
   TempoDet: 4
+  DefesaPlayer: 5
   radius: 10
   power: 50
   forceMode: 1

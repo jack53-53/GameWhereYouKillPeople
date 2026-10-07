@@ -7,6 +7,8 @@ public class RocketScript : MonoBehaviour
     public Transform PlayerTransform;
     public float Speed;
     public float TempoDet;
+    [Tooltip("Porcentagem de dano que o player nao toma")]
+    public int DefesaPlayer;
     public float radius = 5.0f;
     public float power = 10.0f;
     public ForceMode forceMode = ForceMode.Impulse;
@@ -48,7 +50,7 @@ public class RocketScript : MonoBehaviour
             {
                 float dstc = Vector3.Distance(explosionPosition, p.transform.position);
 
-                p.HP -= (int)Mathf.Round(Mathf.Lerp(DMG, 0f, dstc / radius));
+                p.HP -= (int)Mathf.Round(Mathf.Lerp(DMG, 0f, dstc / radius)) / DefesaPlayer;
             }
 
             EnemyScript e = collider.GetComponentInParent<EnemyScript>();

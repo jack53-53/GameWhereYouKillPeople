@@ -132,6 +132,7 @@ public class playerscript : MonoBehaviour
     private bool lifeIsGoingDown;
     private bool canFire = true;
     private float count;
+    private bool CameraIsRecovering;
 
 
     void Start()
@@ -702,17 +703,24 @@ public class playerscript : MonoBehaviour
 
         float startingRoll = cameraPitch;
 
-        while (timer < duration)
+        if (!CameraIsRecovering)
         {
-            timer += Time.deltaTime;
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
 
-            cameraPitch = Mathf.Lerp(startingRoll,targetRoll,timer / duration);
+                cameraPitch = Mathf.Lerp(startingRoll, targetRoll, timer / duration);
 
+                yield return null;
+            }
+
+            cameraPitch = targetRoll;
+            StartCoroutine(CameraRecover(_cameraPitch));
+        }
+        else
+        {
             yield return null;
         }
-
-        cameraPitch = targetRoll;
-        StartCoroutine(CameraRecover(_cameraPitch));
     }
 
     IEnumerator CameraRecover(float X) //pra camera fazer o recover, eu to salvando o valor original antes de mudar, e dai eu to fazendo a mesma função dnv so que sem o recover
@@ -722,7 +730,7 @@ public class playerscript : MonoBehaviour
         float timer = 0f;
 
         float startingRoll = cameraPitch;
-
+        CameraIsRecovering = true;
         while (timer < duration)
         {
             timer += Time.deltaTime;
@@ -733,6 +741,8 @@ public class playerscript : MonoBehaviour
         }
 
         cameraPitch = targetRoll;
+
+        CameraIsRecovering = false;
     }
 
     public void OnWeapon0(InputValue e)
