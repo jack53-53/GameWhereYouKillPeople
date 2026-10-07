@@ -186,6 +186,29 @@ public class playerscript : MonoBehaviour
             Pulou = false;
         }
         _timerBetweenJumps -= Time.deltaTime;
+        if (Speed > 0)
+        {
+            RaycastHit hit;
+            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.2f))
+            {
+                if (hit.collider.TryGetComponent<FloorProperty>(out FloorProperty fp))
+                {
+                    switch (fp.tipoChao)
+                    {
+                        case "Metal":
+                            Debug.Log("METAL");
+                            break;
+                        case "Madeira":
+                            Debug.Log("Madeira");
+                            break;
+                    }
+                }
+                else
+                {
+                    Debug.Log("Voando");
+                }
+            }
+        }
         //Debug.Log(canFire);
         // Debug.Log(hasPlayedSkull);
         if(HP < 20 && !hasPlayedSkull)
@@ -684,6 +707,7 @@ public class playerscript : MonoBehaviour
 
     IEnumerator OverhealBGone()
     {
+        lifeIsGoingDown = true;
         while (HP > 100)
         {
             HP -= 1;
