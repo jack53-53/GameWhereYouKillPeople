@@ -15,6 +15,7 @@ public class EnemyScript : MonoBehaviour
     public Transform playerTransform;
     private float detectionRange = 5f;
     public NavMeshAgent _agent;
+    public float extraRotationSpeed;
     private float viewAngle = 90f;
     private float losePlayerTime = 3f;
     private bool IsIdle = true;
@@ -51,6 +52,7 @@ public class EnemyScript : MonoBehaviour
 
         if (!IsIdle && HP > 0)
         {
+            extraRotation();
             FollowPlayer();
             if (!canSeePlayer())
             {
@@ -93,6 +95,13 @@ public class EnemyScript : MonoBehaviour
     private bool canSeePlayer()
     {
         return isFacingPlayer() && HasClearPathToPlayer();
+    }
+
+    private void extraRotation()
+    {
+        Vector3 lookrotation = _agent.steeringTarget - transform.position;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookrotation), extraRotationSpeed * Time.deltaTime);
+
     }
 
     private bool isFacingPlayer()
