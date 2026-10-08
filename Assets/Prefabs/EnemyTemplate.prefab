@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1475845061888049163}
   - component: {fileID: 2581858734453362606}
   - component: {fileID: 301861705192176484}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HUMAN_4_CARALHO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 4749880675210614052}
   - component: {fileID: 1032436408738881619}
   - component: {fileID: 200802828249617043}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyTemplate
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -174,7 +174,6 @@ MonoBehaviour:
   DamageIDeal: 5
   speed: 3
   timeBetweenAttacks: 0.7
-  playerTransform: {fileID: 4732497464173465676, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
   _agent: {fileID: 1032436408738881619}
   extraRotationSpeed: 5
 --- !u!195 &1032436408738881619

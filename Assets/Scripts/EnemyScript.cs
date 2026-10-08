@@ -12,11 +12,11 @@ public class EnemyScript : MonoBehaviour
     private float _speed;
     public float timeBetweenAttacks;
     private float _timeBetweenAttacks;
-    public Transform playerTransform;
-    private float detectionRange = 5f;
+    private Transform playerTransform;
+    private float detectionRange = 20f;
     public NavMeshAgent _agent;
     public float extraRotationSpeed;
-    private float viewAngle = 90f;
+    private float viewAngle = 180f;
     private float losePlayerTime = 3f;
     private bool IsIdle = true;
     //private bool Atacou;
@@ -30,6 +30,7 @@ public class EnemyScript : MonoBehaviour
         _speed = speed;
         _agent.speed = _speed;
         player = GameObject.Find("Player");
+        playerTransform = player.transform;
     }
 
     // Update is called once per frame
@@ -45,15 +46,16 @@ public class EnemyScript : MonoBehaviour
         }
         var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
         //Debug.Log(distanceToPlayer);
-        if(distanceToPlayer <= detectionRange && canSeePlayer())
+        if (distanceToPlayer <= detectionRange && canSeePlayer())
         {
             IsIdle = false;
         }
 
         if (!IsIdle && HP > 0)
         {
-            extraRotation();
+            //Debug.Log("Indo atras do player");
             FollowPlayer();
+            extraRotation();
             if (!canSeePlayer())
             {
                 _timeSinceLostPlayer += Time.deltaTime;
@@ -82,14 +84,14 @@ public class EnemyScript : MonoBehaviour
                 _agent.speed = _speed;
             }
         }
-        // Debug.Log("estou procurando pelo player");
+        //Debug.Log("estou procurando pelo player");
         _timeBetweenAttacks -= Time.deltaTime;
     }
 
     private void FollowPlayer()
     {
         _agent.SetDestination(playerTransform.position);
-        // Debug.Log("tentando seguir o jogador");
+        //Debug.Log("tentando seguir o jogador");
     }
 
     private bool canSeePlayer()
@@ -108,7 +110,7 @@ public class EnemyScript : MonoBehaviour
     {
         var dirToPlayer = (playerTransform.position - transform.position).normalized;
         var angle = Vector3.Angle(transform.forward, dirToPlayer);
-        // Debug.Log("vi o jogador");
+        //Debug.Log("vi o jogador");
         return angle <= viewAngle / 2f;
     }
 

@@ -205,7 +205,7 @@ public class playerscript : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Voando");
+                    //Debug.Log("Voando");
                 }
             }
         }
@@ -423,8 +423,9 @@ public class playerscript : MonoBehaviour
                         if (_rifleMAG > 0)
                         {
                             atirar(rifleDMG);
-                            Quaternion rot = RifleMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);;
+                            Quaternion rot = RifleMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, RifleMuzzle.position, rot, RifleMuzzle);
+                            muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
                             Destroy(muzzle, rifleCL);
                             _tiroCL = rifleCL;
                             _rifleMAG--;
@@ -495,7 +496,7 @@ public class playerscript : MonoBehaviour
     private void atirar(int DMG)
     {
         RaycastHit hit;
-        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
@@ -505,27 +506,14 @@ public class playerscript : MonoBehaviour
                 Destroy(bulletHole, 10f);
             }
             //Debug.Log("acertei um gameobject");
-            if (hit.transform.gameObject.GetComponent<EnemyScript>() != null)
+            if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))
             {
-                //Debug.Log("ele tem um enemyscript");
-                EnemyScript p = hit.transform.gameObject.GetComponent<EnemyScript>();
-                p.HP -= DMG;
-                //if (p.HP <= 0)
-                //    {
-                //        StartCoroutine(KillScreenEffect());
-                //        //piscar a tela azul estilo gta
-                //        //70% clareza
-                //        //90% clareza
-                //        //desce ate zero
-                //    }
-                if (p.HP > 0)
+                Debug.Log("INIMIGO DETECTADO");
+                enemy.HP -= DMG;
+
+                if (enemy.HP > 0)
                 {
-                    p.LookAtPlayer();
-                }
-                if (hit.transform.gameObject.GetComponent<BreakableScript>() != null)
-                {
-                    BreakableScript b = hit.transform.gameObject.GetComponent<BreakableScript>();
-                    b.HP -= DMG;
+                    enemy.LookAtPlayer();
                 }
             }
         }
