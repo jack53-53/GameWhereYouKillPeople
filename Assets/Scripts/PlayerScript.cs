@@ -17,6 +17,7 @@ public class playerscript : MonoBehaviour
     public RawImage KillEffect;
     public float MultiplierKillEffectSpeed;
     public float SkullEffectSpeed;
+    public float ArrowEffectSpeed;
 
     public Rigidbody RB;
     public Camera PlayerCamera;
@@ -133,6 +134,8 @@ public class playerscript : MonoBehaviour
     private bool canFire = true;
     private float count;
     private bool CameraIsRecovering;
+    public float TempoParaDamageIndicatorDesaparecer;
+    public DamageIndicatorScript DMGSetaScript;
 
 
     void Start()
@@ -406,7 +409,11 @@ public class playerscript : MonoBehaviour
                     {
                         if (_pistolMAG > 0)
                         {
-                            atirar(pistolDMG);
+                            atirar(pistolDMG); 
+                            Quaternion rot = PistolMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
+                            GameObject muzzle = Instantiate(MuzzlePrefab, PistolMuzzle.position, rot, PistolMuzzle);
+                            muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
+                            Destroy(muzzle, rifleCL);
                             _tiroCL = pistolaCL;
                             _pistolMAG--;
                         }
@@ -508,12 +515,10 @@ public class playerscript : MonoBehaviour
             //Debug.Log("acertei um gameobject");
             if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))
             {
-                Debug.Log("INIMIGO DETECTADO");
-                enemy.HP -= DMG;
-
-                if (enemy.HP > 0)
+                Debug.Log("ACHEI");
+                if (enemy.TakeDamage(DMG))
                 {
-                    enemy.LookAtPlayer();
+                    StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed));
                 }
             }
         }
@@ -687,9 +692,10 @@ public class playerscript : MonoBehaviour
         }
     }
 
-    public void takeDamage(int DMG)
+    public void takeDamage(int DMG, Vector3 EnemyLocation)
     {
         HP -= DMG;
+        DMGSetaScript.IniciarAnimacao(ArrowEffectSpeed, TempoParaDamageIndicatorDesaparecer, EnemyLocation);
         StartCoroutine(DamageCamera());
     }
 

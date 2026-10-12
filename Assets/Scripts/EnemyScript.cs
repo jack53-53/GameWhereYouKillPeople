@@ -36,14 +36,6 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (HP <= 0)
-        {
-            playerscript p = player.GetComponent <playerscript>();
-            RawImage r = p.KillEffect;
-            float mult = p.MultiplierKillEffectSpeed;
-            p.StartCoroutine(p.KillScreenEffect(r, mult));
-            Destroy(gameObject);
-        }
         var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
         //Debug.Log(distanceToPlayer);
         if (distanceToPlayer <= detectionRange && canSeePlayer())
@@ -76,7 +68,7 @@ public class EnemyScript : MonoBehaviour
                 _timeBetweenAttacks = timeBetweenAttacks;
                 //Atacou = true; //depois no codigo do inimigo tem que tirar isso aq
                 //se tiver caminho livre pro player, vai ficar parado atirando, senão, vai pro ultimo lugar que ele viu o player.
-                player.GetComponent<playerscript>().takeDamage(DamageIDeal);
+                player.GetComponent<playerscript>().takeDamage(DamageIDeal, transform.position);
             }
             else
             {
@@ -104,6 +96,22 @@ public class EnemyScript : MonoBehaviour
         Vector3 lookrotation = _agent.steeringTarget - transform.position;
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookrotation), extraRotationSpeed * Time.deltaTime);
 
+    }
+
+    public bool TakeDamage(int dano)
+    {
+        Debug.Log("vida do inimigo: " + HP);
+        if (HP - dano < 0)
+        {
+            GameObject.Destroy(this.gameObject);
+            return true;
+        }
+        else
+        {
+            LookAtPlayer();
+            HP -= dano;
+            return false;
+        }
     }
 
     private bool isFacingPlayer()
