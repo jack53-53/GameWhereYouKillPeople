@@ -22,6 +22,7 @@ public class EnemyScript : MonoBehaviour
     public float knockbackDuration = 0.15f;
     public Rigidbody RB;
     public NavMeshAgent _agent;
+    public GameObject RagdollPrefab;
 
     private Transform playerTransform;
     private playerscript playerScript;
@@ -290,6 +291,9 @@ public class EnemyScript : MonoBehaviour
 
         if (HP <= 0)
         {
+            GameObject ragdoll = Instantiate(RagdollPrefab, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), transform.rotation);
+            Rigidbody Rb = ragdoll.transform.GetChild(0).GetComponent<Rigidbody>();
+            Rb.angularVelocity = RB.angularVelocity;
             Destroy(gameObject);
             return true;
         }

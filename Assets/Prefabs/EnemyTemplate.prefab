@@ -177,14 +177,18 @@ MonoBehaviour:
   speed: 3
   retreatDistance: 3
   retreatStopDistance: 5
+  maxRetreatTime: 2
+  retreatCooldown: 1.5
   extraRotationSpeed: 200
   detectionRange: 10
   viewAngle: 180
   timeToDetectPlayer: 1
   losePlayerTime: 3
   AmmountOfKnockBack: 1
+  knockbackDuration: 0.15
   RB: {fileID: 200802828249617043}
   _agent: {fileID: 1032436408738881619}
+  RagdollPrefab: {fileID: 2998514179519832560, guid: f0d03c16d8754824c94f13dd8381e092, type: 3}
 --- !u!195 &1032436408738881619
 NavMeshAgent:
   m_ObjectHideFlags: 0

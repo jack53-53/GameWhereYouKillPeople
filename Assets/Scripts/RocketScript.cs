@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class RocketScript : MonoBehaviour
@@ -26,9 +27,17 @@ public class RocketScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        StartCoroutine(Espera());
+    }
+
+    IEnumerator Espera()
+    {
+        ApplyDamage();
+        yield return 0; //esperemos 1 frame pro ragdoll poder pegar a força
         ApplyExplosionForce();
         Destroy(gameObject);
     }
+
     public void ApplyExplosionForce()
     {
         Vector3 explosionPosition = transform.position;
@@ -43,6 +52,17 @@ public class RocketScript : MonoBehaviour
             {
                 rb.AddExplosionForce(power, explosionPosition, radius, 0f, forceMode);
             }
+        }
+    }
+
+    public void ApplyDamage()
+    {
+        Vector3 explosionPosition = transform.position;
+
+        Collider[] colliders = Physics.OverlapSphere(explosionPosition, radius);
+
+        foreach (Collider collider in colliders)
+        {
 
             playerscript p = collider.GetComponentInParent<playerscript>();
 

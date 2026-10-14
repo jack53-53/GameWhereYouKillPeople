@@ -373,7 +373,7 @@ GameObject:
   - component: {fileID: 5267787053647075969}
   - component: {fileID: 1059595830135050302}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: Mira
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -845,7 +845,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: bae140ce318c3824d8bdc2ce93b32f2d, type: 3}
+  m_Texture: {fileID: 2800000, guid: 71d8cfc683e688a48ae25d9c88987e0a, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1408,6 +1408,7 @@ MonoBehaviour:
   RocketMuzzle: {fileID: 0}
   DoideraMuzzle: {fileID: 0}
   MuzzlePrefab: {fileID: 7978275602769355988, guid: b5c8cd33b0b69ef4eb15b43f7d0af41e, type: 3}
+  Mira: {fileID: 1059595830135050302}
   debugTXT: {fileID: 3319745005509648139}
   vidaTXT: {fileID: 8649045819238793932}
   ammoTXT: {fileID: 4276364272372885995}

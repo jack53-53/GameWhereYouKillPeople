@@ -119,7 +119,7 @@ public class playerscript : MonoBehaviour
     public Transform DoideraMuzzle;
     [Header("SE TIVER DIFERENTES PNGS PRA ARMA TEM QUE FICAR AQ")]
     public GameObject MuzzlePrefab;
-
+    public RawImage Mira;
     public TextMeshProUGUI debugTXT;
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
@@ -173,6 +173,22 @@ public class playerscript : MonoBehaviour
         if (Mouse.current != null) //TODO: fazer o mesmo pro comando
         {
             Fired = Mouse.current.leftButton.isPressed; //grande merda, tive que usar o sistema antigo
+        }
+
+        RaycastHit hitou;
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hitou, Mathf.Infinity))
+        {
+            Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hitou.distance, Color.yellow);
+
+            if (hitou.collider.gameObject.CompareTag("Enemy"))
+            {
+                Mira.color = Color.red;
+            }
+            else
+            {
+                Mira.color = Color.white;
+            }
+
         }
         if (Keyboard.current != null)
         {
@@ -513,6 +529,11 @@ public class playerscript : MonoBehaviour
                 GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TOD1:atirar uma vez, esperar o cooldown de cada arma e atirar dnv 
                 Destroy(bulletHole, 10f);
             }
+            else
+            {
+                GameObject BloodSplatter = Instantiate(BloodSplatterEffect, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));
+                Destroy(BloodSplatter, 0.3f);
+            }
             //Debug.Log("acertei um gameobject");
             if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))
             {
@@ -521,8 +542,6 @@ public class playerscript : MonoBehaviour
                 {
                     StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed));
                 }
-                GameObject BloodSplatter = Instantiate(BloodSplatterEffect, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));
-                Destroy(BloodSplatter, 0.3f);
             }
         }
         else
