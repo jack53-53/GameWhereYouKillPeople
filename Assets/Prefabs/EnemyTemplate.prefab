@@ -172,10 +172,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   HP: 100
   DamageIDeal: 5
-  speed: 3
   timeBetweenAttacks: 0.7
+  DistanceThatEnemyCanAttack: 12
+  speed: 3
+  retreatDistance: 3
+  retreatStopDistance: 5
+  extraRotationSpeed: 200
+  detectionRange: 10
+  viewAngle: 180
+  timeToDetectPlayer: 1
+  losePlayerTime: 3
+  AmmountOfKnockBack: 1
+  RB: {fileID: 200802828249617043}
   _agent: {fileID: 1032436408738881619}
-  extraRotationSpeed: 5
 --- !u!195 &1032436408738881619
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -223,5 +232,5 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0

@@ -59,7 +59,7 @@ public class RocketScript : MonoBehaviour
             {
                 float dstc = Vector3.Distance(explosionPosition, e.transform.position);
 
-                e.TakeDamage((int)Mathf.Round(Mathf.Lerp(DMG, 0f, dstc / radius)));
+                e.TakeDamage((int)Mathf.Round(Mathf.Lerp(DMG, 0f, dstc / radius)), this.transform);
             }
 
             BreakableScript b = collider.GetComponentInParent<BreakableScript>();

@@ -715,7 +715,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 247
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1415,6 +1415,7 @@ MonoBehaviour:
   SKULL: {fileID: 3417639699710286543}
   TempoParaDamageIndicatorDesaparecer: 1
   DMGSetaScript: {fileID: 6781660630420180826}
+  BloodSplatterEffect: {fileID: 2761786589845303690, guid: 342570c15ac167a40afce02e223a4224, type: 3}
 --- !u!54 &5945511653847656092
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1857,7 +1858,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: d104ca9db8d321945972d0d3fabcaf86, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.057
+      value: -0.165
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d104ca9db8d321945972d0d3fabcaf86, type: 3}
       propertyPath: m_LocalPosition.y

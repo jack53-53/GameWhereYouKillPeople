@@ -136,6 +136,7 @@ public class playerscript : MonoBehaviour
     private bool CameraIsRecovering;
     public float TempoParaDamageIndicatorDesaparecer;
     public DamageIndicatorScript DMGSetaScript;
+    public GameObject BloodSplatterEffect;
 
 
     void Start()
@@ -516,10 +517,12 @@ public class playerscript : MonoBehaviour
             if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))
             {
                 Debug.Log("ACHEI");
-                if (enemy.TakeDamage(DMG))
+                if (enemy.TakeDamage(DMG, this.transform))
                 {
                     StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed));
                 }
+                GameObject BloodSplatter = Instantiate(BloodSplatterEffect, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));
+                Destroy(BloodSplatter, 0.3f);
             }
         }
         else

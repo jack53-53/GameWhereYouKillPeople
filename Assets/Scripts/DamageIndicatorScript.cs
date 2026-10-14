@@ -19,6 +19,7 @@ public class DamageIndicatorScript : MonoBehaviour
         if(TimerDesligar < 0 && DamageIndicator.color.a == 1f)
         {
             //StartCoroutine(DesligarIndicador(Mult, TempoAtivo, EnemyTransform));//TODO: CONSERTAR ESSA PORRA
+            //outro problema: quando o indicador é forçado ficar ativo ele nao atualiza a localização do inimigo
         }
     }
 
@@ -43,6 +44,15 @@ public class DamageIndicatorScript : MonoBehaviour
             t += Time.deltaTime * Mult;
             c = DamageIndicator.color;
             c.a = Mathf.Lerp(0, 1f, t);
+            DamageIndicator.color = c;
+            yield return null;
+        }
+        yield return new WaitForSeconds(TempoAtivo);
+        while (DamageIndicator.color.a > 0f)
+        {
+            t += Time.deltaTime * Mult;
+            c = DamageIndicator.color;
+            c.a = Mathf.Lerp(1f, 0f, t);
             DamageIndicator.color = c;
             yield return null;
         }
