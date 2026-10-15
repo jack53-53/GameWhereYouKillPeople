@@ -98,6 +98,14 @@ public class playerscript : MonoBehaviour
     public int _granadaMAX;
     public int _rocketMAX;
     public int _doideraMAX;
+    [Header("Tempo pra cada arma sair do bolso")]
+    public float PistolDeployTime;
+    public float RifleDeployTime;
+    public float GranadaDeployTime;
+    public float RocketDeployTime;
+    public float DoideraDeployTime;
+    public float MeleeDeployTime;
+
     [Header("tempo de recarga de cada arma")]
     public float pistolReload;
     public float rifleReload;
@@ -132,11 +140,12 @@ public class playerscript : MonoBehaviour
     private string writeToScreen;
     private bool lifeIsGoingDown;
     private bool canFire = true;
-    private float count;
     private bool CameraIsRecovering;
     public float TempoParaDamageIndicatorDesaparecer;
     public DamageIndicatorScript DMGSetaScript;
     public GameObject BloodSplatterEffect;
+    private bool IsDeploying;
+    private float deployTimer;
 
 
     void Start()
@@ -173,6 +182,15 @@ public class playerscript : MonoBehaviour
         if (Mouse.current != null) //TODO: fazer o mesmo pro comando
         {
             Fired = Mouse.current.leftButton.isPressed; //grande merda, tive que usar o sistema antigo
+        }
+        if (IsDeploying)
+        {
+            deployTimer -= Time.deltaTime;
+
+            if (deployTimer <= 0f)
+            {
+                IsDeploying = false;
+            }
         }
 
         RaycastHit hitou;
@@ -239,7 +257,7 @@ public class playerscript : MonoBehaviour
         }
         else if(HP >= 60 && hasPlayedSkull)
         {
-            Debug.Log("Se curou");
+            //Debug.Log("Se curou");
             hasPlayedSkull = false;
         }
 
@@ -409,7 +427,7 @@ public class playerscript : MonoBehaviour
         transform.Rotate(Vector3.up * Look.x * Sens);
 
 
-        if (Fired && !Reloading && canFire)
+        if (Fired && !Reloading && canFire && !IsDeploying)
         {
             switch (SelectedWeapon)
             {
@@ -537,11 +555,14 @@ public class playerscript : MonoBehaviour
             //Debug.Log("acertei um gameobject");
             if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))
             {
-                Debug.Log("ACHEI");
                 if (enemy.TakeDamage(DMG, this.transform))
                 {
                     StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed));
                 }
+            }
+            if (hit.collider.TryGetComponent<barrelScript>(out barrelScript Barril))
+            {
+                Barril.Explode();
             }
         }
         else
@@ -693,22 +714,22 @@ public class playerscript : MonoBehaviour
         //}
 
         t = 0f;
-        while (r.color.a < 0.7f)
+        while (r.color.a < 0.3f)
         {
             t += Time.deltaTime * Mult;
             c = r.color;
-            c.a = Mathf.Lerp(0, 0.9f, t);
+            c.a = Mathf.Lerp(0, 0.3f, t);
             r.color = c;
             yield return null;
         }
         yield return new WaitForSeconds(0.3f);
 
         t = 0f;
-        while (r.color.a > 0f)
+        while (r.color.a > 0f) //quebrei alguma coisa aqui TODO: FIX ASAP
         {
             t += Time.deltaTime * Mult;
             c = r.color;
-            c.a = Mathf.Lerp(0.7f, 0f, t);
+            c.a = Mathf.Lerp(0.3f, 0f, t);
             r.color = c;
             yield return null;
         }
@@ -735,7 +756,7 @@ public class playerscript : MonoBehaviour
 
     IEnumerator DamageCamera()
     {
-        float targetRoll = UnityEngine.Random.Range(cameraPitch - 10f, cameraPitch - 30f);
+        float targetRoll = UnityEngine.Random.Range(cameraPitch - 3f, cameraPitch - 5f);
         float duration = 0.01f;
         float timer = 0f;
         float _cameraPitch = cameraPitch;
@@ -784,30 +805,54 @@ public class playerscript : MonoBehaviour
 
         CameraIsRecovering = false;
     }
+    private float GetDeployTime(int weapon)
+    {
+        switch (weapon)
+        {
+            case 0: return MeleeDeployTime;
+            case 1: return PistolDeployTime;
+            case 2: return RifleDeployTime;
+            case 3: return GranadaDeployTime;
+            case 4: return RocketDeployTime;
+            case 5: return DoideraDeployTime;
+
+            default: return 0f;
+        }
+    }
+    private void SelectWeapon(int weapon)
+    {
+        if (SelectedWeapon == weapon)
+            return;
+
+        SelectedWeapon = weapon;
+
+        deployTimer = GetDeployTime(weapon);
+        IsDeploying = deployTimer > 0f;
+    }
 
     public void OnWeapon0(InputValue e)
     {
-        SelectedWeapon = 0;
+        SelectWeapon(0);
     }
     public void OnWeapon1(InputValue e)
     {
-        SelectedWeapon = 1;
+        SelectWeapon(1);
     }
     public void OnWeapon2(InputValue e)
     {
-        SelectedWeapon = 2;
+        SelectWeapon(2);
     }
     public void OnWeapon3(InputValue e)
     {
-        SelectedWeapon = 3;
+        SelectWeapon(3);
     }
     public void OnWeapon4(InputValue e)
     {
-        SelectedWeapon = 4;
+        SelectWeapon(4);
     }
     public void OnWeapon5(InputValue e)
     {
-        SelectedWeapon = 5;
+        SelectWeapon(5);
     }
 
     public void OnReload(InputValue e)

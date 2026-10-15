@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1229825381821979206}
   - component: {fileID: 1291127720096045631}
   - component: {fileID: 272708040752590993}
+  - component: {fileID: 5789912254063368952}
   m_Layer: 0
   m_Name: SPRAYPREFAB
   m_TagString: Untagged
@@ -90,3 +91,24 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5789912254063368952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7978275602769355988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55c2626eaedf25b4eafcac6e5ef8a17b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  Sprays:
+  - {fileID: 2100000, guid: dee62f704f55c364da1a8cd927682612, type: 2}
+  - {fileID: 2100000, guid: b760aef43c94d034ea7c01ae49efef04, type: 2}
+  - {fileID: 2100000, guid: 02b9e27471936564091e1169d1fdfcf7, type: 2}
+  - {fileID: 2100000, guid: 2d2a3f24877614c4e89aa32e213c4521, type: 2}
+  - {fileID: 2100000, guid: d7ed468478a27e543ba1d522da5f6feb, type: 2}
+  - {fileID: 2100000, guid: 8d1d3116ae16bf44da3e93b66acf95b6, type: 2}
+  - {fileID: 2100000, guid: 4e104a98e5de52942bcb60e73b57615c, type: 2}
+  MR: {fileID: 272708040752590993}

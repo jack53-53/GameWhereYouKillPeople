@@ -137,6 +137,6 @@ MonoBehaviour:
   RB: {fileID: 5797395362761581684}
   TempoDet: 4
   radius: 10
-  power: 100
+  power: 200
   upwardsModifier: 50
   forceMode: 1

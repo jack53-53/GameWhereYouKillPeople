@@ -13,6 +13,7 @@ public class RocketScript : MonoBehaviour
     public float radius = 5.0f;
     public float power = 10.0f;
     public ForceMode forceMode = ForceMode.Impulse;
+    public GameObject ExplosionPrefab;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -33,9 +34,10 @@ public class RocketScript : MonoBehaviour
     IEnumerator Espera()
     {
         ApplyDamage();
+        Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
         yield return 0; //esperemos 1 frame pro ragdoll poder pegar a força
         ApplyExplosionForce();
-        Destroy(gameObject);
+        Destroy(this.gameObject);
     }
 
     public void ApplyExplosionForce()
