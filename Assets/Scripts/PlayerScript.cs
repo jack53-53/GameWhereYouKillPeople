@@ -485,7 +485,9 @@ public class playerscript : MonoBehaviour
                     {
                         if (_granadaMAG > 0)
                         {
-                            Instantiate(granadaPrefab, placeToSpawnStuff.position, Quaternion.identity);
+                            GameObject GN = Instantiate(granadaPrefab, placeToSpawnStuff.position, Quaternion.identity);
+                            Rigidbody riggiby = GN.GetComponent<Rigidbody>();
+                            riggiby.angularVelocity = PlayerCamera.transform.forward * 20 + PlayerCamera.transform.up * 5;
                             _tiroCL = grandaCL;
                             _granadaMAG--;
                         }
@@ -561,6 +563,10 @@ public class playerscript : MonoBehaviour
                 {
                     StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed));
                 }
+            }
+            else if (hit.collider.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            {
+                rb.angularVelocity += PlayerCamera.transform.forward * 40f;
             }
             if (hit.collider.TryGetComponent<barrelScript>(out barrelScript Barril))
             {
