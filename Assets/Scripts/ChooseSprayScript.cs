@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class ChooseSprayScript : MonoBehaviour
 {
     public Material[] Sprays;
-    public MeshRenderer MR;
+    public DecalProjector MR;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

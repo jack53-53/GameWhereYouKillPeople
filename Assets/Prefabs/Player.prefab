@@ -1354,7 +1354,7 @@ MonoBehaviour:
   jumpStrenght: 3000
   timeBetweenJumps: 1
   BulletHolePrefab: {fileID: 7260492420778499948, guid: fbfa3424403c59f4caed35407707b90b, type: 3}
-  SprayPrefab: {fileID: 7978275602769355988, guid: 7ed3055ad562fd144b047e5639ac1eb5, type: 3}
+  SprayPrefab: {fileID: 5004956803441201211, guid: 6be831f95dea25d4ca255f5bdf3293f8, type: 3}
   bobSpeed: 2
   bobAmmount: 0.34
   linhasDePalavrasNaTelaDurantePoder: 4

@@ -189,6 +189,7 @@ MonoBehaviour:
   RB: {fileID: 200802828249617043}
   _agent: {fileID: 1032436408738881619}
   RagdollPrefab: {fileID: 2998514179519832560, guid: f0d03c16d8754824c94f13dd8381e092, type: 3}
+  GibsPrefab: {fileID: 2774193097727672496, guid: 14a47729e969a104f872769cde7c2db2, type: 3}
 --- !u!195 &1032436408738881619
 NavMeshAgent:
   m_ObjectHideFlags: 0

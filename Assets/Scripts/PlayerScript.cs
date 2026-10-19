@@ -340,11 +340,13 @@ public class playerscript : MonoBehaviour
         if (Sprayou)
         {
             RaycastHit hit;
-            if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
+            if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, 5f, layerMask))
             {
-                Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-                GameObject SprayPng = Instantiate(SprayPrefab, hit.point + hit.normal * 0.001f, rotation);
-                // Destroy(SprayPng);
+                
+                Quaternion rotation = Quaternion.LookRotation(-hit.normal, PlayerCamera.transform.up);
+
+                GameObject spray = Instantiate(SprayPrefab, hit.point + hit.normal * 0.05f, rotation);
+                Destroy(spray, 60f);
             }
             Sprayou = false;
         }
@@ -718,14 +720,14 @@ public class playerscript : MonoBehaviour
         {
             t += Time.deltaTime * Mult;
             c = r.color;
-            c.a = Mathf.Lerp(0, 0.3f, t);
+            c.a = Mathf.Lerp(0, 0.4f, t);
             r.color = c;
             yield return null;
         }
         yield return new WaitForSeconds(0.3f);
 
         t = 0f;
-        while (r.color.a > 0f) //quebrei alguma coisa aqui TODO: FIX ASAP
+        while (r.color.a > 0f) //quebrei alguma coisa aqui TOD1: FIX ASAP //consertado
         {
             t += Time.deltaTime * Mult;
             c = r.color;

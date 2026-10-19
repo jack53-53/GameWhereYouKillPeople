@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,6 +24,7 @@ public class EnemyScript : MonoBehaviour
     public Rigidbody RB;
     public NavMeshAgent _agent;
     public GameObject RagdollPrefab;
+    public GameObject GibsPrefab;
 
     private Transform playerTransform;
     private playerscript playerScript;
@@ -173,6 +175,18 @@ public class EnemyScript : MonoBehaviour
         {
             StopMoving();
             TryAttack(hasLineOfSight);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision != null)
+        {
+            if (collision.gameObject.GetComponent<RocketScript>() != null)
+            {
+                Instantiate(GibsPrefab, transform.position, Quaternion.identity);
+                Destroy(this.gameObject);
+            }
         }
     }
 
