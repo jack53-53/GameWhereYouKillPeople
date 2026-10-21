@@ -14,6 +14,7 @@ public class RocketScript : MonoBehaviour
     public float power = 10.0f;
     public ForceMode forceMode = ForceMode.Impulse;
     public GameObject ExplosionPrefab;
+    public GameObject ExplosionDecal;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -46,6 +47,32 @@ public class RocketScript : MonoBehaviour
         Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
         yield return 0; //esperemos 1 frame pro ragdoll poder pegar a força
         ApplyExplosionForce();
+        RaycastHit hit;
+        RaycastHit hit2;
+        RaycastHit hit3;
+        RaycastHit hit4;
+
+        Vector3 origin = transform.position;
+
+        if (Physics.Raycast(origin, transform.forward, out hit, 1f))
+        {
+            SpawnDecal(hit);
+        }
+
+        if (Physics.Raycast(origin, transform.TransformDirection(Vector3.left), out hit2, 1f))
+        {
+            SpawnDecal(hit2);
+        }
+
+        if (Physics.Raycast(origin, transform.TransformDirection(Vector3.right), out hit3, 1f))
+        {
+            SpawnDecal(hit3);
+        }
+
+        if (Physics.Raycast(origin, Vector3.down, out hit4, 1f))
+        {
+            SpawnDecal(hit4);
+        }
         Destroy(this.gameObject);
     }
 
@@ -64,6 +91,16 @@ public class RocketScript : MonoBehaviour
                 rb.AddExplosionForce(power, explosionPosition, radius, 0f, forceMode);
             }
         }
+    }
+
+    void SpawnDecal(RaycastHit hit)
+    {
+        Quaternion rotation = Quaternion.LookRotation(hit.normal);
+        GameObject ex = Instantiate(
+            ExplosionDecal,
+            hit.point + hit.normal * 0.01f,
+            rotation
+        );
     }
 
     public void ApplyDamage()

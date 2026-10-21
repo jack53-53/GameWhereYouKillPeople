@@ -282,6 +282,7 @@ MonoBehaviour:
   power: 50
   forceMode: 1
   ExplosionPrefab: {fileID: 1144170553129745016, guid: 6c52879782183b3439b98ca0b5d76692, type: 3}
+  ExplosionDecal: {fileID: 5004956803441201211, guid: ff5aa4da926da6e47a3330179235f792, type: 3}
 --- !u!1 &8427074730283014014 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5640b271e6688d3449881c32057e85bd, type: 3}
