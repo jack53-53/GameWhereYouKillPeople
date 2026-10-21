@@ -178,13 +178,27 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    //private void OnCollisionEnter(Collision collision)
+    //{//nao ta nem ativando isso aq
+    //    Debug.Log("senti");
+    //    if (collision != null)
+    //    {
+    //        if (collision.gameObject.GetComponent<RocketScript>() != null)
+    //        {
+    //            Instantiate(GibsPrefab, transform.position, Quaternion.identity);
+    //            Destroy(this.gameObject);
+    //        }
+    //    }
+    //}
+    private void OnTriggerEnter(Collider collision)
     {
         if (collision != null)
         {
             if (collision.gameObject.GetComponent<RocketScript>() != null)
             {
                 Instantiate(GibsPrefab, transform.position, Quaternion.identity);
+                RocketScript RS = collision.gameObject.GetComponent<RocketScript>();
+                RS.DestroirEEfeito();
                 Destroy(this.gameObject);
             }
         }

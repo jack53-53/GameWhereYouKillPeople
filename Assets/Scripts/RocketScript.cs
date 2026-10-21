@@ -28,7 +28,16 @@ public class RocketScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        StartCoroutine(Espera());
+        if (other.gameObject.GetComponent<EnemyScript>() == null)
+        {
+            StartCoroutine(Espera()); //a logica do missel segue dentro do script do inimigo quando ele é um inimigo
+        }
+    }
+
+    public void DestroirEEfeito()
+    {
+        Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
+        Destroy(this.gameObject);
     }
 
     IEnumerator Espera()

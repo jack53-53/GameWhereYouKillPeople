@@ -134,7 +134,11 @@ public class playerscript : MonoBehaviour
     public TextMeshProUGUI _fpsText;
     public RawImage SKULL;
     private bool hasPlayedSkull = false;
-    private int _lastHP = -1;
+    private int _lastHP = -1; 
+    [SerializeField]
+    private ParticleSystem BulletImpact;
+    [SerializeField]
+    private TrailRenderer BulletTrailRender;
     private float updateInterval = 1.0f;
     private float _currentFPS;
     private string writeToScreen;
@@ -437,7 +441,7 @@ public class playerscript : MonoBehaviour
                     //writeToScreen = "MELEE";
                     if (_tiroCL <= 0)
                     {
-                        atirar(meleeDMG);
+                        atirar(meleeDMG, 0);
                         _tiroCL = meleeCL;
                     }
                     break;
@@ -446,7 +450,7 @@ public class playerscript : MonoBehaviour
                     {
                         if (_pistolMAG > 0)
                         {
-                            atirar(pistolDMG); 
+                            atirar(pistolDMG, 2); 
                             Quaternion rot = PistolMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, PistolMuzzle.position, rot, PistolMuzzle);
                             muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
@@ -466,7 +470,7 @@ public class playerscript : MonoBehaviour
                     {
                         if (_rifleMAG > 0)
                         {
-                            atirar(rifleDMG);
+                            atirar(rifleDMG, 2);
                             Quaternion rot = RifleMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, RifleMuzzle.position, rot, RifleMuzzle);
                             muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
@@ -517,7 +521,7 @@ public class playerscript : MonoBehaviour
                     {
                         if (_doideraMAG > 0)
                         {
-                            atirar(doideraDMG);
+                            atirar(doideraDMG, 5);
                             _tiroCL = doideraCL;
                             _doideraMAG--;
 
@@ -539,12 +543,24 @@ public class playerscript : MonoBehaviour
     //        Color.white
     //    );
     //}
-    private void atirar(int DMG)
+    private void atirar(int DMG, int TipoArma)
     {
         RaycastHit hit;
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+
+            if(TipoArma == 1)
+            {
+                TrailRenderer trail = Instantiate(BulletTrailRender, PistolMuzzle.transform.position, Quaternion.identity);
+                StartCoroutine(Spawntrail(trail, hit));
+            }
+            else if(TipoArma == 2)
+            {
+                TrailRenderer trail = Instantiate(BulletTrailRender, RifleMuzzle.transform.position, Quaternion.identity);
+                StartCoroutine(Spawntrail(trail, hit));
+            }
+
 
             if (!hit.collider.gameObject.CompareTag("Enemy"))
             {
@@ -589,6 +605,24 @@ public class playerscript : MonoBehaviour
     private void EfeitoNoAmmo()
     {
         //caso queiramos um efeito quando o jogador esta sem munição e tenta atirar, talvez so um som
+    }
+
+    IEnumerator Spawntrail(TrailRenderer Trail, RaycastHit hit)
+    {
+        float time = 0;
+        Vector3 StartPos = Trail.transform.position;
+
+        while (time < 1)
+        {
+            Trail.transform.position = Vector3.Lerp(StartPos, hit.point, time);
+            time += Time.deltaTime / Trail.time;
+
+            yield return null;
+        }
+        Trail.transform.position = hit.point;
+        Instantiate(BulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
+
+        Destroy(Trail.gameObject, Trail.time); 
     }
 
     IEnumerator Reload()

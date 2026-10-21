@@ -208,6 +208,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6da294b085da5e479e37dc97a735223, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8056014178690868272}
     - targetCorrespondingSourceObject: {fileID: 7036213049465896255, guid: f6da294b085da5e479e37dc97a735223, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2966429869213194330}
@@ -604,6 +607,24 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!1 &2998514179519832560 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f6da294b085da5e479e37dc97a735223, type: 3}
+  m_PrefabInstance: {fileID: 2692507247733202081}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-8056014178690868272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2998514179519832560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc455a936f81f14eab5d8ad5c6ed130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillMyselfScript
+  TempoAteEuMeMatar: 20
 --- !u!1 &3649220962235089018 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1727436340114742491, guid: f6da294b085da5e479e37dc97a735223, type: 3}
