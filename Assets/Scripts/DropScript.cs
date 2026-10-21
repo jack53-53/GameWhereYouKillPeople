@@ -21,6 +21,7 @@ public class DropScript : MonoBehaviour
                     {
                         p._pistolMAX = p.pistolMAX;
                     }
+                    p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.cyan));
                     break;
                 case 2:
                     if (p._rifleMAX < p.rifleMAX && p._rifleMAX + municao <= p.rifleMAX)
@@ -31,6 +32,7 @@ public class DropScript : MonoBehaviour
                     {
                         p._rifleMAX = p.rifleMAX;
                     }
+                    p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.darkBlue));
                     break;
                 case 3:
                     if (p._granadaMAX < p.granadaMAX && p._granadaMAX + municao <= p.granadaMAX)
@@ -41,6 +43,7 @@ public class DropScript : MonoBehaviour
                     {
                         p._granadaMAX = p.granadaMAX;
                     }
+                    p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.darkGreen));
                     break;
                 case 4:
                     if (p._rocketMAX < p.rocketMAX && p._rocketMAX + municao <= p.rocketMAX)
@@ -51,6 +54,7 @@ public class DropScript : MonoBehaviour
                     {
                         p._rocketMAX = p.rocketMAX;
                     }
+                    p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.green));
                     break;
                 case 5:
                     if (p._doideraMAX < p.doideraMAX && p._doideraMAX + municao <= p.doideraMAX)
@@ -61,6 +65,7 @@ public class DropScript : MonoBehaviour
                     {
                         p._doideraMAX = p.doideraMAX;
                     }
+                    p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.darkRed));
                     break;
             }
             Destroy(gameObject);

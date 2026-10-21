@@ -150,6 +150,10 @@ public class playerscript : MonoBehaviour
     public GameObject BloodSplatterEffect;
     private bool IsDeploying;
     private float deployTimer;
+    public Color CorKillScreenEffect;
+    public float TempoPraVerSeOEfeitoQuebrou;
+    private float _TempoPraVerSeOEfeitoQuebrou;
+    public bool IsCivillian;
 
 
     void Start()
@@ -165,6 +169,7 @@ public class playerscript : MonoBehaviour
         _granadaMAG = granadaMAG;
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
+        _TempoPraVerSeOEfeitoQuebrou = TempoPraVerSeOEfeitoQuebrou;
         // _localXCameraBreath = localXCameraBreath;
         // _localYCameraBreath = localYCameraBreath;
     }
@@ -173,11 +178,6 @@ public class playerscript : MonoBehaviour
     {
         _currentFPS = 1f / Time.deltaTime;
         UpdateFPS();
-        if (HP != _lastHP)
-        { 
-        vidaTXT.text = HP.ToString();
-         _lastHP = HP; 
-         }
         if(HP > 100 && !lifeIsGoingDown)
         {
             StartCoroutine(OverhealBGone());
@@ -216,18 +216,15 @@ public class playerscript : MonoBehaviour
         {
             canFire = !Keyboard.current.cKey.isPressed;
         }
-        if (Pulou)
+        if(_TempoPraVerSeOEfeitoQuebrou < 0 && KillEffect.color.a > 0)
         {
-            //transform.position = new Vector3(transform.position.x, transform.position.y + jumpStrenght, transform.position.z);RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), 1.2f) && _timerBetweenJumps < 0)
-            {
-                RB.AddForce(new Vector3(0, jumpStrenght, 0));
-                //Pulou = false; //buffer(?) //ficou muito ruim
-                _timerBetweenJumps = timeBetweenJumps;
-            }
-            Pulou = false;
+            Color c = KillEffect.color;
+            c.a = 0;
+            KillEffect.color = c;
         }
-        _timerBetweenJumps -= Time.deltaTime;
+        _TempoPraVerSeOEfeitoQuebrou -= Time.deltaTime;
+
+
         if (Speed > 0)
         {
             RaycastHit hit;
@@ -256,50 +253,13 @@ public class playerscript : MonoBehaviour
         if(HP < 20 && !hasPlayedSkull)
         {
             // Debug.Log("tentando tocar efeito");
-            StartCoroutine(KillScreenEffect(SKULL, SkullEffectSpeed));
+            StartCoroutine(KillScreenEffect(SKULL, SkullEffectSpeed, Color.black));
             hasPlayedSkull = true;
         }
         else if(HP >= 60 && hasPlayedSkull)
         {
             //Debug.Log("Se curou");
             hasPlayedSkull = false;
-        }
-
-        if (!canFire)
-        {
-            int a = 0;
-            Color c;
-            c = KillEffect.color;
-            c.a = 0.5f;
-            KillEffect.color = c;
-            if (_palavrasDebugCL <= 0)
-            {
-                foreach (char character in writeToScreen)
-                {
-                    if (character == '\n')
-                    {
-                        a++;
-                    }
-                }
-                writeToScreen += "\n" + palavrasDebug[UnityEngine.Random.Range(0, palavrasDebug.Length)];
-                _palavrasDebugCL = palavrasDebugCL;
-            }
-            if (a >= linhasDePalavrasNaTelaDurantePoder)
-            {
-                writeToScreen = "";
-            }
-            //TODO:todos os efeitos de quando o jogador ta perdido
-        }
-        else
-        {
-            writeToScreen = "";
-            Color c;
-            c = KillEffect.color;
-            if (c.a > 0f)
-            {
-                c.a = c.a - 0.01f;
-                KillEffect.color = c;
-            }
         }
 
                 float targetRoll = -Dire.x * 7f;
@@ -338,84 +298,143 @@ public class playerscript : MonoBehaviour
         {
             t = 0f;
         }
-
-        _palavrasDebugCL -= Time.deltaTime;
-
-        if (Sprayou)
+        if (!IsCivillian)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, 5f, layerMask))
+            if (!canFire)
             {
-                
-                Quaternion rotation = Quaternion.LookRotation(-hit.normal, PlayerCamera.transform.up);
-
-                GameObject spray = Instantiate(SprayPrefab, hit.point + hit.normal * 0.05f, rotation);
-                Destroy(spray, 60f);
+                int a = 0;
+                Color c;
+                c = KillEffect.color;
+                c.a = 0.5f;
+                KillEffect.color = c;
+                if (_palavrasDebugCL <= 0)
+                {
+                    foreach (char character in writeToScreen)
+                    {
+                        if (character == '\n')
+                        {
+                            a++;
+                        }
+                    }
+                    writeToScreen += "\n" + palavrasDebug[UnityEngine.Random.Range(0, palavrasDebug.Length)];
+                    _palavrasDebugCL = palavrasDebugCL;
+                }
+                if (a >= linhasDePalavrasNaTelaDurantePoder)
+                {
+                    writeToScreen = "";
+                }
+                //TODO:todos os efeitos de quando o jogador ta perdido
             }
-            Sprayou = false;
+            else
+            {
+                writeToScreen = "";
+                Color c;
+                c = KillEffect.color;
+                if (c.a > 0f)
+                {
+                    c.a = c.a - 0.01f;
+                    KillEffect.color = c;
+                }
+            }
+            _palavrasDebugCL -= Time.deltaTime;
+
+            if (HP != _lastHP)
+            {
+                vidaTXT.text = HP.ToString();
+                _lastHP = HP;
+            }
+
+            if (Pulou)
+            {
+                //transform.position = new Vector3(transform.position.x, transform.position.y + jumpStrenght, transform.position.z);RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), 1.2f) && _timerBetweenJumps < 0)
+                {
+                    RB.AddForce(new Vector3(0, jumpStrenght, 0));
+                    //Pulou = false; //buffer(?) //ficou muito ruim
+                    _timerBetweenJumps = timeBetweenJumps;
+                }
+                Pulou = false;
+            }
+            _timerBetweenJumps -= Time.deltaTime;
+
+            if (Sprayou)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, 5f, layerMask))
+                {
+
+                    Quaternion rotation = Quaternion.LookRotation(-hit.normal, PlayerCamera.transform.up);
+
+                    GameObject spray = Instantiate(SprayPrefab, hit.point + hit.normal * 0.05f, rotation);
+                    Destroy(spray, 60f);
+                }
+                Sprayou = false;
+            }
+            switch (SelectedWeapon)
+            {
+                case 0:
+                    MeleeModel.SetActive(true); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                    PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                    RifleModel.SetActive(false);
+                    GranadaModel.SetActive(false);
+                    RocketModel.SetActive(false);
+                    DoideraModel.SetActive(false);
+                    ammoTXT.text = "";
+                    break;
+                case 1:
+                    //writeToScreen = "PISTOLA";
+                    MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                    PistolModel.SetActive(true); //I SWEAR IM NOT YANDERE DEV
+                    RifleModel.SetActive(false);
+                    GranadaModel.SetActive(false);
+                    RocketModel.SetActive(false);
+                    DoideraModel.SetActive(false);
+                    ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
+                    break;
+                case 2:
+                    MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                    PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                    RifleModel.SetActive(true);
+                    GranadaModel.SetActive(false);
+                    RocketModel.SetActive(false);
+                    DoideraModel.SetActive(false);
+                    //writeToScreen = "RIFLE";
+                    ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
+                    break;
+                case 3:
+                    MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                    PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                    RifleModel.SetActive(false);
+                    GranadaModel.SetActive(true);
+                    RocketModel.SetActive(false);
+                    DoideraModel.SetActive(false);
+                    //writeToScreen = "GRANADA";
+                    ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
+                    break;
+                case 4:
+                    MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                    PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                    RifleModel.SetActive(false);
+                    GranadaModel.SetActive(false);
+                    RocketModel.SetActive(true);
+                    DoideraModel.SetActive(false);
+                    //writeToScreen = "ROCKET";
+                    ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
+                    break;
+                case 5:
+                    MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
+                    PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
+                    RifleModel.SetActive(false);
+                    GranadaModel.SetActive(false);
+                    RocketModel.SetActive(false);
+                    DoideraModel.SetActive(true);
+                    //writeToScreen = "DOIDERA";
+                    ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
+                    break;
+            }
+
         }
-        switch (SelectedWeapon)
-        {
-            case 0:
-                MeleeModel.SetActive(true); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
-                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
-                RifleModel.SetActive(false);
-                GranadaModel.SetActive(false);
-                RocketModel.SetActive(false);
-                DoideraModel.SetActive(false);
-                ammoTXT.text = "";
-                break;
-            case 1:
-                //writeToScreen = "PISTOLA";
-                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
-                PistolModel.SetActive(true); //I SWEAR IM NOT YANDERE DEV
-                RifleModel.SetActive(false);
-                GranadaModel.SetActive(false);
-                RocketModel.SetActive(false);
-                DoideraModel.SetActive(false);
-                ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
-                break;
-            case 2:
-                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
-                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
-                RifleModel.SetActive(true);
-                GranadaModel.SetActive(false);
-                RocketModel.SetActive(false);
-                DoideraModel.SetActive(false);
-                //writeToScreen = "RIFLE";
-                ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
-                break;
-            case 3:
-                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
-                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
-                RifleModel.SetActive(false);
-                GranadaModel.SetActive(true);
-                RocketModel.SetActive(false);
-                DoideraModel.SetActive(false);
-                //writeToScreen = "GRANADA";
-                ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
-                break;
-            case 4:
-                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
-                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
-                RifleModel.SetActive(false);
-                GranadaModel.SetActive(false);
-                RocketModel.SetActive(true);
-                DoideraModel.SetActive(false);
-                //writeToScreen = "ROCKET";
-                ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
-                break;
-            case 5:
-                MeleeModel.SetActive(false); //MY GAME IS GOOD THE ALGORITHM JUST IGNORES ME
-                PistolModel.SetActive(false); //I SWEAR IM NOT YANDERE DEV
-                RifleModel.SetActive(false);
-                GranadaModel.SetActive(false);
-                RocketModel.SetActive(false);
-                DoideraModel.SetActive(true);
-                //writeToScreen = "DOIDERA";
-                ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
-                break;
-        }
+
     }
 
     void FixedUpdate()
@@ -433,7 +452,7 @@ public class playerscript : MonoBehaviour
         transform.Rotate(Vector3.up * Look.x * Sens);
 
 
-        if (Fired && !Reloading && canFire && !IsDeploying)
+        if (Fired && !Reloading && canFire && !IsDeploying && !IsCivillian)
         {
             switch (SelectedWeapon)
             {
@@ -577,7 +596,7 @@ public class playerscript : MonoBehaviour
             {
                 if (enemy.TakeDamage(DMG, this.transform))
                 {
-                    StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed));
+                    StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed, CorKillScreenEffect));
                 }
             }
             else if (hit.collider.TryGetComponent<Rigidbody>(out Rigidbody rb))
@@ -730,11 +749,12 @@ public class playerscript : MonoBehaviour
     {
         _fpsText.text = "Curr FPS: " + Mathf.RoundToInt(_currentFPS);
     }
-    public IEnumerator KillScreenEffect(RawImage r, float Mult)
+    public IEnumerator KillScreenEffect(RawImage r, float Mult, Color Cor)
     {
+        _TempoPraVerSeOEfeitoQuebrou = TempoPraVerSeOEfeitoQuebrou;
         //Debug.Log("EFEITO");
         float t = 0f;
-        Color c = r.color;
+        Color c = Cor;
 
         //while (KillEffect.color.a < 0.7f)
         //{
@@ -759,7 +779,7 @@ public class playerscript : MonoBehaviour
         while (r.color.a < 0.3f)
         {
             t += Time.deltaTime * Mult;
-            c = r.color;
+            c = Cor;
             c.a = Mathf.Lerp(0, 0.4f, t);
             r.color = c;
             yield return null;
@@ -770,7 +790,7 @@ public class playerscript : MonoBehaviour
         while (r.color.a > 0f) //quebrei alguma coisa aqui TOD1: FIX ASAP //consertado
         {
             t += Time.deltaTime * Mult;
-            c = r.color;
+            c = Cor;
             c.a = Mathf.Lerp(0.3f, 0f, t);
             r.color = c;
             yield return null;
