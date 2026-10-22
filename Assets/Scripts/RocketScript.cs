@@ -16,10 +16,6 @@ public class RocketScript : MonoBehaviour
     public GameObject ExplosionPrefab;
     public GameObject ExplosionDecal;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
@@ -84,7 +80,15 @@ public class RocketScript : MonoBehaviour
 
         foreach (Collider collider in colliders)
         {
-            Rigidbody rb = collider.GetComponentInParent<Rigidbody>();
+            Rigidbody rb;
+            if (collider.GetComponentInParent<Rigidbody>() != null)
+            {
+                rb = collider.GetComponentInParent<Rigidbody>();
+            }
+            else
+            {
+                rb = collider.GetComponentInChildren<Rigidbody>();
+            }
 
             if (rb != null && !rb.isKinematic)
             {
@@ -96,11 +100,7 @@ public class RocketScript : MonoBehaviour
     void SpawnDecal(RaycastHit hit)
     {
         Quaternion rotation = Quaternion.LookRotation(hit.normal);
-        GameObject ex = Instantiate(
-            ExplosionDecal,
-            hit.point + hit.normal * 0.01f,
-            rotation
-        );
+        Instantiate(ExplosionDecal, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));
     }
 
     public void ApplyDamage()

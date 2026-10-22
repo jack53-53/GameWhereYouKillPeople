@@ -5,7 +5,7 @@ public class DropScript : MonoBehaviour
     public int tipo; //0 = sem arma, 1 = pistola, 2 = rifle, 3 = granada, 4 = bazooka, 5 = BFG
     public int municao; //quantidade de munição que vai dar pro player
 
-    public void OnTriggerEnter(Collider other)
+    public void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Player"))
         {

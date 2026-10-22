@@ -564,6 +564,7 @@ public class playerscript : MonoBehaviour
     //}
     private void atirar(int DMG, int TipoArma)
     {
+        StartCoroutine(DamageCamera(0, 2f));
         RaycastHit hit;
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
         {
@@ -639,8 +640,13 @@ public class playerscript : MonoBehaviour
             yield return null;
         }
         Trail.transform.position = hit.point;
-        Instantiate(BulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
-
+        if (hit.collider != null)
+        {
+            if (!hit.collider.gameObject.CompareTag("Enemy"))
+            {
+                Instantiate(BulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            }
+        }
         Destroy(Trail.gameObject, Trail.time); 
     }
 
@@ -801,7 +807,7 @@ public class playerscript : MonoBehaviour
     {
         HP -= DMG;
         DMGSetaScript.IniciarAnimacao(ArrowEffectSpeed, TempoParaDamageIndicatorDesaparecer, EnemyLocation);
-        StartCoroutine(DamageCamera());
+        StartCoroutine(DamageCamera(-3f, 5f));
     }
 
     IEnumerator OverhealBGone()
@@ -816,9 +822,9 @@ public class playerscript : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator DamageCamera()
+    IEnumerator DamageCamera(float AmmountDown, float AmmountUp)
     {
-        float targetRoll = UnityEngine.Random.Range(cameraPitch - 3f, cameraPitch - 5f);
+        float targetRoll = UnityEngine.Random.Range(cameraPitch - AmmountDown, cameraPitch - AmmountUp);
         float duration = 0.01f;
         float timer = 0f;
         float _cameraPitch = cameraPitch;

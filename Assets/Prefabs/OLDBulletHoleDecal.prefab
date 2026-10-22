@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6752122042099576732}
   - component: {fileID: 4633500529808182697}
   m_Layer: 0
-  m_Name: BulletHoleDecal
+  m_Name: OLDBulletHoleDecal
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

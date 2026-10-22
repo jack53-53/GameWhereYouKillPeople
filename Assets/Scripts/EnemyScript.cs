@@ -318,7 +318,7 @@ public class EnemyScript : MonoBehaviour
         HP -= dano;
 
         if (HP <= 0)
-        {
+        { //ta trigando duas vezes quando explodido por um barril
             GameObject ragdoll = Instantiate(RagdollPrefab, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), transform.rotation);
             Rigidbody Rb = ragdoll.transform.GetChild(0).GetComponent<Rigidbody>();
             Rb.angularVelocity = RB.angularVelocity;
