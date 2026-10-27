@@ -10,7 +10,8 @@ public class HpDropScript : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             playerscript p = other.gameObject.GetComponent<playerscript>();
-            p.HP += healAmmount;
+            p.HP += healAmmount; 
+            p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.lightGreen));
             Destroy(gameObject);
         }
     }

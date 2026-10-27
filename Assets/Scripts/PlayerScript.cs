@@ -134,7 +134,7 @@ public class playerscript : MonoBehaviour
     public TextMeshProUGUI _fpsText;
     public RawImage SKULL;
     private bool hasPlayedSkull = false;
-    private int _lastHP = -1; 
+    private int _lastHP = -1;
     [SerializeField]
     private ParticleSystem BulletImpact;
     [SerializeField]
@@ -154,6 +154,28 @@ public class playerscript : MonoBehaviour
     public float TempoPraVerSeOEfeitoQuebrou;
     private float _TempoPraVerSeOEfeitoQuebrou;
     public bool IsCivillian;
+    public bool IsPaused;
+    [Header("Sons")]
+    public AudioClip WalkingOnWood;
+    public AudioClip WalkingOnConcrete;
+    public AudioClip WalkingOnMetal;
+    public AudioClip AirBorne;
+    public AudioClip PistolReadSound;
+    public AudioClip PistolShootSound;
+    public AudioClip PistolReloadSound;
+    public AudioClip PistolEmptySound;
+    public AudioClip RifleReadySound;
+    public AudioClip RifleShootSound;
+    public AudioClip RifleReloadSound;
+    public AudioClip RifleEmptySound;
+    public AudioClip GranadaThrowSound;
+    public AudioClip GranadaReadySound;
+    public AudioClip RocketShoot;
+    public AudioClip RocketReloadSound;
+    public AudioClip RocketEmptySound;
+    public AudioClip DrillReadySound;
+    public AudioClip DrillShoot;
+
 
 
     void Start()
@@ -178,7 +200,7 @@ public class playerscript : MonoBehaviour
     {
         _currentFPS = 1f / Time.deltaTime;
         UpdateFPS();
-        if(HP > 100 && !lifeIsGoingDown)
+        if (HP > 100 && !lifeIsGoingDown)
         {
             StartCoroutine(OverhealBGone());
         }
@@ -196,6 +218,7 @@ public class playerscript : MonoBehaviour
                 IsDeploying = false;
             }
         }
+
 
         RaycastHit hitou;
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hitou, Mathf.Infinity))
@@ -216,7 +239,7 @@ public class playerscript : MonoBehaviour
         {
             canFire = !Keyboard.current.cKey.isPressed;
         }
-        if(_TempoPraVerSeOEfeitoQuebrou < 0 && KillEffect.color.a > 0)
+        if (_TempoPraVerSeOEfeitoQuebrou < 0 && KillEffect.color.a > 0)
         {
             Color c = KillEffect.color;
             c.a = 0;
@@ -228,7 +251,7 @@ public class playerscript : MonoBehaviour
         if (Speed > 0)
         {
             RaycastHit hit;
-            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.2f))
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.2f))
             {
                 if (hit.collider.TryGetComponent<FloorProperty>(out FloorProperty fp))
                 {
@@ -250,19 +273,19 @@ public class playerscript : MonoBehaviour
         }
         //Debug.Log(canFire);
         // Debug.Log(hasPlayedSkull);
-        if(HP < 20 && !hasPlayedSkull)
+        if (HP < 20 && !hasPlayedSkull)
         {
             // Debug.Log("tentando tocar efeito");
             StartCoroutine(KillScreenEffect(SKULL, SkullEffectSpeed, Color.black));
             hasPlayedSkull = true;
         }
-        else if(HP >= 60 && hasPlayedSkull)
+        else if (HP >= 60 && hasPlayedSkull)
         {
             //Debug.Log("Se curou");
             hasPlayedSkull = false;
         }
 
-                float targetRoll = -Dire.x * 7f;
+        float targetRoll = -Dire.x * 7f;
 
         //coisos da camera
         if (Dire.x > 0)
@@ -286,8 +309,15 @@ public class playerscript : MonoBehaviour
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
         float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
-
-        PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + bob, 0f, cameraRoll);
+        if (IsPaused)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + bob, 0f, cameraRoll);
+            Time.timeScale = 1f;
+        }
 
         if (cameraRoll != targetRoll)
         {
@@ -469,7 +499,7 @@ public class playerscript : MonoBehaviour
                     {
                         if (_pistolMAG > 0)
                         {
-                            atirar(pistolDMG, 2); 
+                            atirar(pistolDMG, 2);
                             Quaternion rot = PistolMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, PistolMuzzle.position, rot, PistolMuzzle);
                             muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
@@ -570,12 +600,12 @@ public class playerscript : MonoBehaviour
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
-            if(TipoArma == 1)
+            if (TipoArma == 1)
             {
                 TrailRenderer trail = Instantiate(BulletTrailRender, PistolMuzzle.transform.position, Quaternion.identity);
                 StartCoroutine(Spawntrail(trail, hit));
             }
-            else if(TipoArma == 2)
+            else if (TipoArma == 2)
             {
                 TrailRenderer trail = Instantiate(BulletTrailRender, RifleMuzzle.transform.position, Quaternion.identity);
                 StartCoroutine(Spawntrail(trail, hit));
@@ -647,7 +677,7 @@ public class playerscript : MonoBehaviour
                 Instantiate(BulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
             }
         }
-        Destroy(Trail.gameObject, Trail.time); 
+        Destroy(Trail.gameObject, Trail.time);
     }
 
     IEnumerator Reload()
@@ -963,5 +993,10 @@ public class playerscript : MonoBehaviour
     public void OnSpray(InputValue e)
     {
         Sprayou = e.isPressed;
+    }
+
+    public void OnPause(InputValue e)
+    {
+        IsPaused = !IsPaused;
     }
 }
