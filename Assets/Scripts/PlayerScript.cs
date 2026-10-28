@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class playerscript : MonoBehaviour
 {
-    public float Sens = 0.1f;
 
     public int HP;
     public float Speed = 5f;
@@ -155,6 +154,9 @@ public class playerscript : MonoBehaviour
     private float _TempoPraVerSeOEfeitoQuebrou;
     public bool IsCivillian;
     public bool IsPaused;
+    public Slider SliderFX;
+    public Slider SliderSens;
+
     [Header("Sons")]
     public AudioClip WalkingOnWood;
     public AudioClip WalkingOnConcrete;
@@ -175,6 +177,8 @@ public class playerscript : MonoBehaviour
     public AudioClip RocketEmptySound;
     public AudioClip DrillReadySound;
     public AudioClip DrillShoot;
+    public AudioClip DoideraReady;
+    public AudioClip DoideraShoot;
 
 
 
@@ -185,6 +189,8 @@ public class playerscript : MonoBehaviour
         Color color = KillEffect.color;
         color.a = 0f;
         KillEffect.color = color;
+        GameManagerScript.instance.Sensitivity = SliderSens.value;
+        GameManagerScript.instance.SoundFxVolume = SliderFX.value;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         _pistolMAG = pistolMAG;
         _rifleMAG = rifleMAG;
@@ -305,17 +311,37 @@ public class playerscript : MonoBehaviour
         //         //TODO: fica pra amanha dnv
         //     }
         // }
-        cameraPitch -= Look.y * Sens;
+        cameraPitch -= Look.y * GameManagerScript.instance.Sensitivity;
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
         float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
         if (IsPaused)
         {
             Time.timeScale = 0f;
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            foreach (Transform child in SliderSens.transform)
+            {
+                child.gameObject.SetActive(true);
+            }
+            foreach (Transform child in SliderFX.transform)
+            {
+                child.gameObject.SetActive(true);
+            }
+            GameManagerScript.instance.Sensitivity = SliderSens.value;
+            GameManagerScript.instance.SoundFxVolume = SliderFX.value;
         }
         else
         {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + bob, 0f, cameraRoll);
+            foreach (Transform child in SliderSens.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+            foreach (Transform child in SliderFX.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
             Time.timeScale = 1f;
         }
 
@@ -392,7 +418,6 @@ public class playerscript : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, 5f, layerMask))
                 {
-
                     Quaternion rotation = Quaternion.LookRotation(-hit.normal, PlayerCamera.transform.up);
 
                     GameObject spray = Instantiate(SprayPrefab, hit.point + hit.normal * 0.05f, rotation);
@@ -479,7 +504,7 @@ public class playerscript : MonoBehaviour
         //Debug.Log("cooldown tiro:" + _tiroCL );
         //Debug.Log("atirando?:" + Fired.ToString() );
 
-        transform.Rotate(Vector3.up * Look.x * Sens);
+        transform.Rotate(Vector3.up * Look.x * GameManagerScript.instance.Sensitivity);
 
 
         if (Fired && !Reloading && canFire && !IsDeploying && !IsCivillian)
@@ -491,6 +516,7 @@ public class playerscript : MonoBehaviour
                     if (_tiroCL <= 0)
                     {
                         atirar(meleeDMG, 0);
+                        SoundFxManager.instance.PlaySoundClip(DrillShoot, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
                         _tiroCL = meleeCL;
                     }
                     break;
@@ -500,6 +526,7 @@ public class playerscript : MonoBehaviour
                         if (_pistolMAG > 0)
                         {
                             atirar(pistolDMG, 2);
+                            SoundFxManager.instance.PlaySoundClip(PistolShootSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
                             Quaternion rot = PistolMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, PistolMuzzle.position, rot, PistolMuzzle);
                             muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
@@ -509,6 +536,7 @@ public class playerscript : MonoBehaviour
                         }
                         else
                         {
+                            EfeitoNoAmmo();
                             TryReload();
                         }
                     }
@@ -520,15 +548,17 @@ public class playerscript : MonoBehaviour
                         if (_rifleMAG > 0)
                         {
                             atirar(rifleDMG, 2);
+                            SoundFxManager.instance.PlaySoundClip(RifleShootSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
                             Quaternion rot = RifleMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, RifleMuzzle.position, rot, RifleMuzzle);
-                            muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
+                            muzzle.layer = LayerMask.NameToLayer("Viewmodel");
                             Destroy(muzzle, rifleCL);
                             _tiroCL = rifleCL;
                             _rifleMAG--;
                         }
                         else
                         {
+                            EfeitoNoAmmo();
                             TryReload();
                         }
                     }
@@ -539,6 +569,7 @@ public class playerscript : MonoBehaviour
                         if (_granadaMAG > 0)
                         {
                             GameObject GN = Instantiate(granadaPrefab, placeToSpawnStuff.position, Quaternion.identity);
+                            SoundFxManager.instance.PlaySoundClip(GranadaThrowSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
                             Rigidbody riggiby = GN.GetComponent<Rigidbody>();
                             riggiby.angularVelocity = PlayerCamera.transform.forward * 20 + PlayerCamera.transform.up * 5;
                             _tiroCL = grandaCL;
@@ -556,11 +587,13 @@ public class playerscript : MonoBehaviour
                         if (_rocketMAG > 0)
                         {
                             Instantiate(RocketPrefab, placeToSpawnStuff.position, PlayerCamera.transform.rotation);
+                            SoundFxManager.instance.PlaySoundClip(RocketShoot, this.transform, GameManagerScript.instance.SoundFxVolume, 1f, 2f);
                             _tiroCL = rocketCL;
                             _rocketMAG--;
                         }
                         else
                         {
+                            EfeitoNoAmmo();
                             TryReload();
                         }
                     }
@@ -571,12 +604,14 @@ public class playerscript : MonoBehaviour
                         if (_doideraMAG > 0)
                         {
                             atirar(doideraDMG, 5);
+                            SoundFxManager.instance.PlaySoundClip(DoideraShoot, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
                             _tiroCL = doideraCL;
                             _doideraMAG--;
 
                         }
                         else
                         {
+                            EfeitoNoAmmo();
                             TryReload();
                         }
                     }
@@ -654,6 +689,7 @@ public class playerscript : MonoBehaviour
 
     private void EfeitoNoAmmo()
     {
+        SoundFxManager.instance.PlaySoundClip(RifleEmptySound, this.transform, GameManagerScript.instance.SoundFxVolume, 1f, 2f);
         //caso queiramos um efeito quando o jogador esta sem munição e tenta atirar, talvez so um som
     }
 
@@ -921,6 +957,8 @@ public class playerscript : MonoBehaviour
     {
         if (SelectedWeapon == weapon)
             return;
+
+        SoundFxManager.instance.PlaySoundClip(RifleReadySound, this.transform, GameManagerScript.instance.SoundFxVolume, 1f, 2f);
 
         SelectedWeapon = weapon;
 

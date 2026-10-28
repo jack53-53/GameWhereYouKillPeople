@@ -9,6 +9,7 @@ public class GranadaScript : MonoBehaviour
     public float radius = 5.0f;
     public float power = 10.0f;
     public float upwardsModifier = 3.0f;
+    public AudioClip ExplosionSound;
     public ForceMode forceMode = ForceMode.Impulse;
 
     private void Start()
@@ -22,6 +23,7 @@ public class GranadaScript : MonoBehaviour
         if (TempoDet <= 0)
         {
             ApplyExplosionForce();
+            SoundFxManager.instance.PlaySoundClip(ExplosionSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
         //TODO: falta o efeito da explosao
             Destroy(gameObject);
         }

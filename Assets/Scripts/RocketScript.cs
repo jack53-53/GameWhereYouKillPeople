@@ -15,6 +15,7 @@ public class RocketScript : MonoBehaviour
     public ForceMode forceMode = ForceMode.Impulse;
     public GameObject ExplosionPrefab;
     public GameObject ExplosionDecal;
+    public AudioClip ExplosionSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     // Update is called once per frame
@@ -34,6 +35,7 @@ public class RocketScript : MonoBehaviour
     public void DestroirEEfeito()
     {
         Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
+        SoundFxManager.instance.PlaySoundClip(ExplosionSound, this.transform, GameManagerScript.instance.SoundFxVolume, -1, 2);
         Destroy(this.gameObject);
     }
 

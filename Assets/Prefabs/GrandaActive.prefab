@@ -139,4 +139,5 @@ MonoBehaviour:
   radius: 10
   power: 200
   upwardsModifier: 50
+  ExplosionSound: {fileID: 8300000, guid: 24ca108d70b91e147a6afc24b4cc5c6e, type: 3}
   forceMode: 1
