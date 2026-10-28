@@ -156,6 +156,7 @@ public class playerscript : MonoBehaviour
     public bool IsPaused;
     public Slider SliderFX;
     public Slider SliderSens;
+    public Slider SliderMusica;
 
     [Header("Sons")]
     public AudioClip WalkingOnWood;
@@ -179,6 +180,9 @@ public class playerscript : MonoBehaviour
     public AudioClip DrillShoot;
     public AudioClip DoideraReady;
     public AudioClip DoideraShoot;
+    public AudioClip SoundtrackFight;
+    public AudioClip HitMarkerSound;
+    public AudioSource SoundtrackSourse;
 
 
 
@@ -191,6 +195,7 @@ public class playerscript : MonoBehaviour
         KillEffect.color = color;
         GameManagerScript.instance.Sensitivity = SliderSens.value;
         GameManagerScript.instance.SoundFxVolume = SliderFX.value;
+        GameManagerScript.instance.SoundVolume = SliderMusica.value;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         _pistolMAG = pistolMAG;
         _rifleMAG = rifleMAG;
@@ -198,6 +203,9 @@ public class playerscript : MonoBehaviour
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
         _TempoPraVerSeOEfeitoQuebrou = TempoPraVerSeOEfeitoQuebrou;
+        SoundtrackSourse.clip = SoundtrackFight;
+        SoundtrackSourse.volume = GameManagerScript.instance.SoundVolume;
+        SoundtrackSourse.Play();
         // _localXCameraBreath = localXCameraBreath;
         // _localYCameraBreath = localYCameraBreath;
     }
@@ -317,6 +325,7 @@ public class playerscript : MonoBehaviour
         float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
         if (IsPaused)
         {
+            //SoundtrackSourse.Pause();
             Time.timeScale = 0f;
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
             foreach (Transform child in SliderSens.transform)
@@ -327,8 +336,14 @@ public class playerscript : MonoBehaviour
             {
                 child.gameObject.SetActive(true);
             }
+            foreach (Transform child in SliderMusica.transform)
+            {
+                child.gameObject.SetActive(true);
+            }
             GameManagerScript.instance.Sensitivity = SliderSens.value;
             GameManagerScript.instance.SoundFxVolume = SliderFX.value;
+            GameManagerScript.instance.SoundMusicVolume = SliderMusica.value;
+            SoundtrackSourse.volume = GameManagerScript.instance.SoundMusicVolume;
         }
         else
         {
@@ -339,6 +354,10 @@ public class playerscript : MonoBehaviour
                 child.gameObject.SetActive(false);
             }
             foreach (Transform child in SliderFX.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+            foreach (Transform child in SliderMusica.transform)
             {
                 child.gameObject.SetActive(false);
             }
@@ -656,6 +675,7 @@ public class playerscript : MonoBehaviour
             {
                 GameObject BloodSplatter = Instantiate(BloodSplatterEffect, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));
                 Destroy(BloodSplatter, 0.3f);
+                SoundFxManager.instance.PlaySoundClip(HitMarkerSound, this.transform, GameManagerScript.instance.SoundFxVolume, 0f, 1f);
             }
             //Debug.Log("acertei um gameobject");
             if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))

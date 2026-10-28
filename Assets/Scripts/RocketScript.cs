@@ -94,7 +94,14 @@ public class RocketScript : MonoBehaviour
 
             if (rb != null && !rb.isKinematic)
             {
-                rb.AddExplosionForce(power, explosionPosition, radius, 0f, forceMode);
+                if (collider.CompareTag("Player"))
+                {
+                    rb.AddExplosionForce(power * 5, explosionPosition, radius, 0f, forceMode);
+                }
+                else
+                {
+                    rb.AddExplosionForce(power, explosionPosition, radius, 0f, forceMode);
+                }
             }
         }
     }

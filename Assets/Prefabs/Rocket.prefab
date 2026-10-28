@@ -189,9 +189,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 5183403340010484450}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5640b271e6688d3449881c32057e85bd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2244772697078781798}
     - targetCorrespondingSourceObject: {fileID: -4219859510393569081, guid: 5640b271e6688d3449881c32057e85bd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4617861556748596500}
@@ -278,27 +275,9 @@ MonoBehaviour:
   Speed: 20
   TempoDet: 4
   DefesaPlayer: 5
-  radius: 10
+  radius: 4
   power: 50
   forceMode: 1
   ExplosionPrefab: {fileID: 1144170553129745016, guid: 6c52879782183b3439b98ca0b5d76692, type: 3}
   ExplosionDecal: {fileID: 5004956803441201211, guid: ff5aa4da926da6e47a3330179235f792, type: 3}
   ExplosionSound: {fileID: 8300000, guid: 24ca108d70b91e147a6afc24b4cc5c6e, type: 3}
---- !u!1 &8427074730283014014 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5640b271e6688d3449881c32057e85bd, type: 3}
-  m_PrefabInstance: {fileID: 8661427039045003823}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2244772697078781798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8427074730283014014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcc455a936f81f14eab5d8ad5c6ed130, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KillMyselfScript
-  TempoAteEuMeMatar: 5
