@@ -4,15 +4,15 @@ public class HpDropScript : MonoBehaviour
 {
     public int healAmmount;
 
-
-    public void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            playerscript p = other.gameObject.GetComponent<playerscript>();
-            p.HP += healAmmount; 
+            playerscript p = collision.gameObject.GetComponent<playerscript>();
+            p.HP += healAmmount;
             p.StartCoroutine(p.KillScreenEffect(p.KillEffect, p.MultiplierKillEffectSpeed * 0.2f, Color.lightGreen));
             Destroy(gameObject);
         }
+
     }
 }

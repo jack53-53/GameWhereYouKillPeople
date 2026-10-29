@@ -567,7 +567,7 @@ public class playerscript : MonoBehaviour
                         if (_rifleMAG > 0)
                         {
                             atirar(rifleDMG, 2);
-                            SoundFxManager.instance.PlaySoundClip(RifleShootSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
+                            SoundFxManager.instance.PlaySoundClip(RifleShootSound, this.transform, GameManagerScript.instance.SoundFxVolume * 0.2f, 1, 2);
                             Quaternion rot = RifleMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, RifleMuzzle.position, rot, RifleMuzzle);
                             muzzle.layer = LayerMask.NameToLayer("Viewmodel");
@@ -697,6 +697,14 @@ public class playerscript : MonoBehaviour
         else
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Physics.IgnoreCollision(collision.collider, this.gameObject.GetComponent<Collider>());
         }
     }
 

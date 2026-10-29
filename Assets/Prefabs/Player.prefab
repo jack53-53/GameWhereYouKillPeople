@@ -470,6 +470,133 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!1 &1941229570098720723
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8629151660656557996}
+  - component: {fileID: 5267144277072773207}
+  - component: {fileID: 5704412882722695581}
+  m_Layer: 2
+  m_Name: Spot Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8629151660656557996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941229570098720723}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2017879683068873723}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!108 &5267144277072773207
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941229570098720723}
+  m_Enabled: 1
+  serializedVersion: 12
+  m_Type: 0
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 2
+  m_Range: 10
+  m_SpotAngle: 88.94543
+  m_InnerSpotAngle: 0
+  m_CookieSize2D: {x: 0.5, y: 0.5}
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
+--- !u!114 &5704412882722695581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941229570098720723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &2393578006825587524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,6 +1742,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4000848390952248194}
+  - {fileID: 8629151660656557996}
   m_Father: {fileID: 4732497464173465676}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &777692557284424425
@@ -1806,9 +1934,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 7559305790228740538}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 2
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2840,7 +2968,7 @@ MonoBehaviour:
   KillEffect: {fileID: 8706711082723717639}
   MultiplierKillEffectSpeed: 50
   SkullEffectSpeed: 1
-  ArrowEffectSpeed: 1
+  ArrowEffectSpeed: 20
   RB: {fileID: 5945511653847656092}
   PlayerCamera: {fileID: 777692557284424425}
   SelectedWeapon: 1
@@ -2939,7 +3067,7 @@ MonoBehaviour:
   SKULL: {fileID: 3417639699710286543}
   BulletImpact: {fileID: 9100621260627631755, guid: e34049d9c5a4e974794241da5a693713, type: 3}
   BulletTrailRender: {fileID: 7386625490562270231, guid: 658f622041351b04ea0ab0049526ee52, type: 3}
-  TempoParaDamageIndicatorDesaparecer: 1
+  TempoParaDamageIndicatorDesaparecer: 0.1
   DMGSetaScript: {fileID: 6781660630420180826}
   BloodSplatterEffect: {fileID: 1144170553129745016, guid: 78d937c6a2cd7c846ad1e8eb4b2a834e, type: 3}
   CorKillScreenEffect: {r: 0.85098046, g: 0.43529415, b: 0, a: 0}
@@ -2967,7 +3095,7 @@ MonoBehaviour:
   RocketReloadSound: {fileID: 0}
   RocketEmptySound: {fileID: 0}
   DrillReadySound: {fileID: 8300000, guid: 766311fe9c8ff214eada4cdf2283408c, type: 3}
-  DrillShoot: {fileID: 0}
+  DrillShoot: {fileID: 8300000, guid: 3be644aa71648554f888168ae4bbe809, type: 3}
   DoideraReady: {fileID: 8300000, guid: 766311fe9c8ff214eada4cdf2283408c, type: 3}
   DoideraShoot: {fileID: 0}
   SoundtrackFight: {fileID: 8300000, guid: 03dd7259a7bba5041bbab683fde8e9be, type: 3}
