@@ -12,6 +12,7 @@ public class RocketScript : MonoBehaviour
     public int DefesaPlayer;
     public float radius = 5.0f;
     public float power = 10.0f;
+    public float MultiplicadorForcaPlayer;
     public ForceMode forceMode = ForceMode.Impulse;
     public GameObject ExplosionPrefab;
     public GameObject ExplosionDecal;
@@ -96,7 +97,7 @@ public class RocketScript : MonoBehaviour
             {
                 if (collider.CompareTag("Player"))
                 {
-                    rb.AddExplosionForce(power * 5, explosionPosition, radius, 0f, forceMode);
+                    rb.AddExplosionForce(power * MultiplicadorForcaPlayer, explosionPosition, radius, 0f, forceMode);
                 }
                 else
                 {

@@ -76,4 +76,6 @@ MonoBehaviour:
   Sprays:
   - {fileID: 2100000, guid: ab94f05bf63f9ec47bcea251ab47e3c4, type: 2}
   - {fileID: 2100000, guid: a26c67fa82478124cb37cddc6e3fcf22, type: 2}
+  - {fileID: 2100000, guid: 8d23e9d0c8c382b4bae7df5216ba9a06, type: 2}
+  - {fileID: 2100000, guid: ffe8552d57853644ab83f70bb9cafc5a, type: 2}
   MR: {fileID: 3509884393498876711}

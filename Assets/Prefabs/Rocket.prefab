@@ -277,6 +277,7 @@ MonoBehaviour:
   DefesaPlayer: 5
   radius: 4
   power: 50
+  MultiplicadorForcaPlayer: 3
   forceMode: 1
   ExplosionPrefab: {fileID: 1144170553129745016, guid: 6c52879782183b3439b98ca0b5d76692, type: 3}
   ExplosionDecal: {fileID: 5004956803441201211, guid: ff5aa4da926da6e47a3330179235f792, type: 3}

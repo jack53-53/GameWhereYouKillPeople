@@ -5,18 +5,27 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class playerscript : MonoBehaviour
 {
 
-    public int HP;
-    public float Speed = 5f;
+    public int HP; 
+    [Header("Movement")]
+    public float Acceleration = 20f;
+    public float GroundFriction = 8f;
+    public float AirAcceleration = 3f;
+    public float StopSpeed = 2f;
+    public float AirControl = 0.5f;
+    public float Speed;
+    public float MaxSpeed;
     public int DMG;
     public RawImage KillEffect;
     public float MultiplierKillEffectSpeed;
     public float SkullEffectSpeed;
     public float ArrowEffectSpeed;
+    public float SpeedBoost;
 
     public Rigidbody RB;
     public Camera PlayerCamera;
@@ -35,8 +44,8 @@ public class playerscript : MonoBehaviour
     public GameObject BulletHolePrefab;
     public GameObject SprayPrefab;
     private float cameraRoll = 0f;
-    public float bobSpeed = 5f;
-    public float bobAmmount = 1f;
+    //public float bobSpeed = 5f;
+    //public float bobAmmount = 1f;
 
     // public float localXCameraBreath;
     // public float localYCameraBreath;
@@ -158,6 +167,19 @@ public class playerscript : MonoBehaviour
     public Slider SliderSens;
     public Slider SliderMusica;
 
+    [Header("Passos")]
+    public AudioClip[] MetalFootsteps;
+    public AudioClip[] WoodFootsteps;
+    public AudioClip[] DefaultFootsteps;
+
+    public float StepDistance = 0.85f;
+    public float MinMovementSpeed = 0.2f;
+
+    public float MinFootstepPitch = 0.9f;
+    public float MaxFootstepPitch = 1.1f;
+
+    private float DistanceTravelled;
+
     [Header("Sons")]
     public AudioClip WalkingOnWood;
     public AudioClip WalkingOnConcrete;
@@ -203,7 +225,10 @@ public class playerscript : MonoBehaviour
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
         _TempoPraVerSeOEfeitoQuebrou = TempoPraVerSeOEfeitoQuebrou;
-        SoundtrackSourse.clip = SoundtrackFight;
+        if(SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Casa"))
+        {
+            SoundtrackSourse.clip = SoundtrackFight;
+        }
         SoundtrackSourse.volume = GameManagerScript.instance.SoundVolume;
         SoundtrackSourse.Play();
         // _localXCameraBreath = localXCameraBreath;
@@ -262,29 +287,39 @@ public class playerscript : MonoBehaviour
         _TempoPraVerSeOEfeitoQuebrou -= Time.deltaTime;
 
 
-        if (Speed > 0)
+        Vector3 horizontalVelocity = RB.linearVelocity;
+        horizontalVelocity.y = 0f;
+
+        float currentSpeed = horizontalVelocity.magnitude;
+
+        // Don't play footsteps when standing still
+        if (currentSpeed < MinMovementSpeed)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.2f))
+            DistanceTravelled = 0f;
+            return;
+        }
+
+        // Check if the player is grounded
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit2, 1.2f))
+        {
+            DistanceTravelled += currentSpeed * Time.deltaTime;
+
+            if (DistanceTravelled >= StepDistance)
             {
-                if (hit.collider.TryGetComponent<FloorProperty>(out FloorProperty fp))
-                {
-                    switch (fp.tipoChao)
-                    {
-                        case "Metal":
-                            Debug.Log("METAL");
-                            break;
-                        case "Madeira":
-                            Debug.Log("Madeira");
-                            break;
-                    }
-                }
-                else
-                {
-                    //Debug.Log("Voando");
-                }
+                DistanceTravelled = 0f;
+
+                FloorProperty fp = hit2.collider.GetComponent<FloorProperty>();
+
+                PlayFootstep(fp, currentSpeed);
             }
         }
+        else
+        {
+            // Don't accumulate distance while airborne
+            DistanceTravelled = 0f;
+        }
+
+
         //Debug.Log(canFire);
         // Debug.Log(hasPlayedSkull);
         if (HP < 20 && !hasPlayedSkull)
@@ -322,7 +357,7 @@ public class playerscript : MonoBehaviour
         cameraPitch -= Look.y * GameManagerScript.instance.Sensitivity;
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
-        float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
+        //float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
         if (IsPaused)
         {
             //SoundtrackSourse.Pause();
@@ -348,7 +383,7 @@ public class playerscript : MonoBehaviour
         else
         {
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-            PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + bob, 0f, cameraRoll);
+            PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch, 0f, cameraRoll);
             foreach (Transform child in SliderSens.transform)
             {
                 child.gameObject.SetActive(false);
@@ -425,6 +460,7 @@ public class playerscript : MonoBehaviour
                 if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), 1.2f) && _timerBetweenJumps < 0)
                 {
                     RB.AddForce(new Vector3(0, jumpStrenght, 0));
+                    RB.AddForce(this.gameObject.transform.forward * SpeedBoost);
                     //Pulou = false; //buffer(?) //ficou muito ruim
                     _timerBetweenJumps = timeBetweenJumps;
                 }
@@ -516,9 +552,20 @@ public class playerscript : MonoBehaviour
         _tiroCL -= Time.fixedDeltaTime;
         Vector3 move = transform.right * Dire.x + transform.forward * Dire.y;
 
-        Vector3 velocity = RB.linearVelocity;
+        move = Vector3.ClampMagnitude(move, 1f);
 
-        RB.linearVelocity = new Vector3(move.x * Speed, velocity.y, move.z * Speed);
+        bool grounded = Physics.Raycast(transform.position,Vector3.down,1.2f);
+
+        if (grounded)
+        {
+            ApplyFriction();
+
+            Accelerate(move, Speed, Acceleration);
+        }
+        else
+        {
+            Accelerate(move, Speed, AirAcceleration);
+        }
 
         //Debug.Log("cooldown tiro:" + _tiroCL );
         //Debug.Log("atirando?:" + Fired.ToString() );
@@ -650,8 +697,9 @@ public class playerscript : MonoBehaviour
     {
         StartCoroutine(DamageCamera(0, 2f));
         RaycastHit hit;
-        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity)) //acertando o player, eu acho
         {
+            Debug.Log(hit.collider);
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
             if (TipoArma == 1)
@@ -904,6 +952,32 @@ public class playerscript : MonoBehaviour
         StartCoroutine(DamageCamera(-3f, 5f));
     }
 
+    private void PlayFootstep(FloorProperty fp, float currentSpeed)
+    {
+        AudioClip[] sounds = DefaultFootsteps;
+
+        if (fp != null)
+        {
+            switch (fp.tipoChao)
+            {
+                case "Metal":
+                    sounds = MetalFootsteps;
+                    break;
+
+                case "Madeira":
+                    sounds = WoodFootsteps;
+                    break;
+            }
+        }
+
+        if (sounds == null || sounds.Length == 0)
+            return;
+
+        AudioClip selectedSound = sounds[UnityEngine.Random.Range(0, sounds.Length)];
+
+        SoundFxManager.instance.PlaySoundClip(selectedSound, this.transform, GameManagerScript.instance.SoundFxVolume, MinFootstepPitch, MaxFootstepPitch);
+    }
+
     IEnumerator OverhealBGone()
     {
         lifeIsGoingDown = true;
@@ -944,6 +1018,57 @@ public class playerscript : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    void ApplyFriction()
+    {
+        Vector3 velocity = RB.linearVelocity;
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0f, velocity.z);
+
+        float speed = horizontalVelocity.magnitude;
+
+        if (speed < 0.01f)
+        {
+            return;
+        }
+
+        float control = Mathf.Max(speed, StopSpeed);
+        float drop = control * GroundFriction * Time.fixedDeltaTime;
+
+        float newSpeed = Mathf.Max(speed - drop, 0f);
+
+        horizontalVelocity *= newSpeed / speed;
+
+        RB.linearVelocity = new Vector3(horizontalVelocity.x,velocity.y,horizontalVelocity.z);
+    }
+
+    void Accelerate(Vector3 wishDirection, float wishSpeed, float acceleration)
+    {
+        if (wishDirection.sqrMagnitude == 0f)
+        {
+            return;
+        }
+
+        Vector3 velocity = RB.linearVelocity;
+
+        Vector3 horizontalVelocity = new Vector3(velocity.x,0f,velocity.z);
+
+        float currentSpeed = Vector3.Dot(horizontalVelocity, wishDirection);
+
+        float addSpeed = wishSpeed - currentSpeed;
+
+        if (addSpeed <= 0f)
+        {
+            return;
+        }
+
+        float accelerationSpeed = acceleration * wishSpeed * Time.fixedDeltaTime;
+
+        accelerationSpeed = Mathf.Min(accelerationSpeed, addSpeed);
+
+        horizontalVelocity += wishDirection * accelerationSpeed;
+
+        RB.linearVelocity = new Vector3(horizontalVelocity.x,velocity.y,horizontalVelocity.z);
     }
 
     IEnumerator CameraRecover(float X) //pra camera fazer o recover, eu to salvando o valor original antes de mudar, e dai eu to fazendo a mesma função dnv so que sem o recover

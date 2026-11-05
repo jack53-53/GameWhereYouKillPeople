@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.UI.Image;
 
 public class EnemyScript : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class EnemyScript : MonoBehaviour
     public float losePlayerTime = 3f;
     public float AmmountOfKnockBack = 5f;
     public float knockbackDuration = 0.15f;
+    public float ChanceToMiss = 50;
+    public float ChanceThatGetsAddedWhenHeMisses = 10;
+    public float ChanceThatGetsRemovedWhenHeHits = 40;
     public Rigidbody RB;
     public NavMeshAgent _agent;
     public GameObject RagdollPrefab;
@@ -41,7 +45,15 @@ public class EnemyScript : MonoBehaviour
     private bool isSearching;
     private bool isKnockedBack;
 
+
+    public TrailRenderer TrailPrefab;
+    public Transform PlaceWhereTrailSpawns;
+    public ParticleSystem BulletImpact;
     private Vector3 lastKnownPlayerPos;
+
+    [Header("Enemy Accuracy")]
+    public float MissSpread = 2f;
+    public float MinMissDistance = 3f;
 
     private void Start()
     {
@@ -207,14 +219,67 @@ public class EnemyScript : MonoBehaviour
     private void TryAttack(bool hasLineOfSight)
     {
         if (!hasLineOfSight || attackTimer > 0f)
-        {
             return;
+
+        if (playerScript == null || playerTransform == null)
+            return;
+
+        Vector3 origin = transform.position + Vector3.up;
+        Vector3 target = playerTransform.position + Vector3.up;
+        Vector3 direction = (target - origin).normalized;
+
+        bool didHit = Physics.Raycast(
+            origin,
+            direction,
+            out RaycastHit hit,
+            100f,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Collide
+        );
+
+        Debug.DrawRay(origin, direction * 100f, Color.red, 2f);
+
+        bool hitPlayer = didHit && hit.collider != null &&
+            (hit.transform == playerTransform ||
+             hit.transform.IsChildOf(playerTransform));
+
+        bool missed = Random.Range(0, 100) < ChanceToMiss;
+        
+        Debug.Log("Errou: " +  missed);
+        Debug.Log(Random.Range(0, 100));
+
+        Vector3 trailEnd;
+
+        if (hitPlayer && !missed)
+        {
+            ChanceToMiss = Mathf.Max(0, ChanceToMiss - ChanceThatGetsRemovedWhenHeHits);
+
+            playerScript.takeDamage(DamageIDeal, transform.position);
+            trailEnd = hit.point;
+        }
+        else
+        {
+            ChanceToMiss = Mathf.Min(100, ChanceToMiss + ChanceThatGetsAddedWhenHeMisses);
+
+            Vector3 randomOffset = Random.insideUnitSphere * MissSpread;
+            Vector3 missTarget = playerTransform.position + randomOffset;
+
+            Vector3 shotDirection =
+                (missTarget - PlaceWhereTrailSpawns.position).normalized;
+
+            if (Physics.Raycast(PlaceWhereTrailSpawns.position, shotDirection, out RaycastHit missHit, 100f))
+                trailEnd = missHit.point;
+            else
+                trailEnd = PlaceWhereTrailSpawns.position + shotDirection * 100f;
         }
 
-        if (playerScript != null)
-        {
-            playerScript.takeDamage(DamageIDeal, transform.position);
-        }
+        TrailRenderer trail = Instantiate(
+            TrailPrefab,
+            PlaceWhereTrailSpawns.position,
+            Quaternion.identity
+        );
+
+        StartCoroutine(Spawntrail(trail, trailEnd));
 
         attackTimer = timeBetweenAttacks;
     }
@@ -297,6 +362,22 @@ public class EnemyScript : MonoBehaviour
         }
 
         return true;
+    }
+
+    IEnumerator Spawntrail(TrailRenderer Trail, Vector3 endPoint)
+    {
+        float time = 0;
+        Vector3 StartPos = Trail.transform.position;
+
+        while (time < 1)
+        {
+            Trail.transform.position = Vector3.Lerp(StartPos, endPoint, time);
+            time += Time.deltaTime / Trail.time;
+            yield return null;
+        }
+
+        Trail.transform.position = endPoint;
+        Destroy(Trail.gameObject, Trail.time);
     }
 
     private void RotateTowardsPoint(Vector3 point)
