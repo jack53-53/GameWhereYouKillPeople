@@ -218,13 +218,25 @@ MonoBehaviour:
   losePlayerTime: 3
   AmmountOfKnockBack: 1
   knockbackDuration: 0.15
+  ChanceToMiss: 50
+  ChanceThatGetsAddedWhenHeMisses: 10
+  ChanceThatGetsRemovedWhenHeHits: 40
   RB: {fileID: 200802828249617043}
   _agent: {fileID: 1032436408738881619}
   RagdollPrefab: {fileID: 2998514179519832560, guid: f0d03c16d8754824c94f13dd8381e092, type: 3}
   GibsPrefab: {fileID: 2774193097727672496, guid: 14a47729e969a104f872769cde7c2db2, type: 3}
-  TrailPrefab: {fileID: 7386625490562270231, guid: 658f622041351b04ea0ab0049526ee52, type: 3}
+  Drop:
+  - {fileID: 6663682179477545436, guid: 1107ae360f302ad40aeb0f9f3bd8d54c, type: 3}
+  - {fileID: 7118850813477438000, guid: 472484c273ff7594cb67460bf36bb95a, type: 3}
+  - {fileID: 1053652768769338868, guid: 5238abf640aabe842a160f51edbaa2b3, type: 3}
+  - {fileID: 1561975861721917064, guid: 5962620e205d56b47b8fbc406a101ca5, type: 3}
+  - {fileID: 200778508470604841, guid: 1d77622274b77814b8ad90cfef0a67aa, type: 3}
+  - {fileID: 1392358804162579738, guid: 65adb720b75ac8e4aa9aeed95467d536, type: 3}
+  TrailPrefab: {fileID: 1562396549861081955, guid: 00c978c6ddd0ecd4db9a26db88253825, type: 3}
   PlaceWhereTrailSpawns: {fileID: 8118640718578934054}
   BulletImpact: {fileID: 9100621260627631755, guid: e34049d9c5a4e974794241da5a693713, type: 3}
+  MissSpread: 2
+  MinMissDistance: 3
 --- !u!195 &1032436408738881619
 NavMeshAgent:
   m_ObjectHideFlags: 0

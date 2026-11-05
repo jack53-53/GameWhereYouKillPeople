@@ -5814,7 +5814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   PlaceToGo: {fileID: 1559713213}
-  Velocidade: 0.1
+  Velocidade: 0.01
   CoolDown: 1
 --- !u!1 &1271899194
 GameObject:

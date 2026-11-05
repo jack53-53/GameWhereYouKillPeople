@@ -287,6 +287,7 @@ public class playerscript : MonoBehaviour
         _TempoPraVerSeOEfeitoQuebrou -= Time.deltaTime;
 
 
+        //esse codigo ta fazendo alguma macumba pro player nao conseguir olhar pra cima quando estiver parado
         Vector3 horizontalVelocity = RB.linearVelocity;
         horizontalVelocity.y = 0f;
 
@@ -296,7 +297,6 @@ public class playerscript : MonoBehaviour
         if (currentSpeed < MinMovementSpeed)
         {
             DistanceTravelled = 0f;
-            return;
         }
 
         // Check if the player is grounded
@@ -309,7 +309,7 @@ public class playerscript : MonoBehaviour
                 DistanceTravelled = 0f;
 
                 FloorProperty fp = hit2.collider.GetComponent<FloorProperty>();
-
+                //tentando tocar passo
                 PlayFootstep(fp, currentSpeed);
             }
         }
@@ -318,6 +318,7 @@ public class playerscript : MonoBehaviour
             // Don't accumulate distance while airborne
             DistanceTravelled = 0f;
         }
+
 
 
         //Debug.Log(canFire);
@@ -595,7 +596,7 @@ public class playerscript : MonoBehaviour
                             SoundFxManager.instance.PlaySoundClip(PistolShootSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1, 2);
                             Quaternion rot = PistolMuzzle.rotation * Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 180f), 0f);
                             GameObject muzzle = Instantiate(MuzzlePrefab, PistolMuzzle.position, rot, PistolMuzzle);
-                            muzzle.layer = LayerMask.NameToLayer("Viewmodel"); ;
+                            muzzle.layer = LayerMask.NameToLayer("Viewmodel");
                             Destroy(muzzle, rifleCL);
                             _tiroCL = pistolaCL;
                             _pistolMAG--;
@@ -966,16 +967,21 @@ public class playerscript : MonoBehaviour
 
                 case "Madeira":
                     sounds = WoodFootsteps;
+                    Debug.Log("é madeira");
                     break;
             }
         }
 
         if (sounds == null || sounds.Length == 0)
+        {
+            Debug.Log("NAO TEM SOM");
             return;
+        }
 
         AudioClip selectedSound = sounds[UnityEngine.Random.Range(0, sounds.Length)];
 
         SoundFxManager.instance.PlaySoundClip(selectedSound, this.transform, GameManagerScript.instance.SoundFxVolume, MinFootstepPitch, MaxFootstepPitch);
+        Debug.Log("Tentando usar o sounfxmanager");
     }
 
     IEnumerator OverhealBGone()

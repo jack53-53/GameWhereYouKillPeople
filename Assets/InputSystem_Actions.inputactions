@@ -527,10 +527,10 @@
                 {
                     "name": "",
                     "id": "003a2f69-2436-4960-a254-7380aeea94a5",
-                    "path": "<Keyboard>/0",
+                    "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "Weapon0",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -538,7 +538,7 @@
                 {
                     "name": "",
                     "id": "232535bb-50e5-4718-86de-bd8564128576",
-                    "path": "<Keyboard>/1",
+                    "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -549,7 +549,7 @@
                 {
                     "name": "",
                     "id": "a3446484-548a-4b21-9c22-16464f75679f",
-                    "path": "<Keyboard>/2",
+                    "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -560,7 +560,7 @@
                 {
                     "name": "",
                     "id": "0b3f883d-d423-47cc-a483-0f35bcd14c77",
-                    "path": "<Keyboard>/3",
+                    "path": "<Keyboard>/4",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -571,7 +571,7 @@
                 {
                     "name": "",
                     "id": "1e3fe6c9-4bc5-4561-86d9-91f3fabb8bab",
-                    "path": "<Keyboard>/4",
+                    "path": "<Keyboard>/5",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -582,7 +582,7 @@
                 {
                     "name": "",
                     "id": "b0e6d003-f06d-42eb-9a04-53efbcc96148",
-                    "path": "<Keyboard>/5",
+                    "path": "<Keyboard>/6",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",

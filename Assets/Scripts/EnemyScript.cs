@@ -45,6 +45,9 @@ public class EnemyScript : MonoBehaviour
     private bool isSearching;
     private bool isKnockedBack;
 
+    [Tooltip("Itens que vao spawnar quando ele morrer")]
+    public GameObject[] Drop;
+
 
     public TrailRenderer TrailPrefab;
     public Transform PlaceWhereTrailSpawns;
@@ -82,10 +85,6 @@ public class EnemyScript : MonoBehaviour
 
     private void Update()
     {
-        if (HP <= 0 || isKnockedBack)
-        {
-            return;
-        }
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);
 
@@ -403,6 +402,7 @@ public class EnemyScript : MonoBehaviour
             GameObject ragdoll = Instantiate(RagdollPrefab, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), transform.rotation);
             Rigidbody Rb = ragdoll.transform.GetChild(0).GetComponent<Rigidbody>();
             Rb.angularVelocity = RB.angularVelocity;
+            GameObject G = Instantiate(Drop[UnityEngine.Random.Range(0, Drop.Length)], this.transform.position, Quaternion.identity);
             Destroy(gameObject);
             return true;
         }
