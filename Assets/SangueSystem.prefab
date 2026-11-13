@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5161060020399339362}
   - component: {fileID: 7648995481128597348}
   - component: {fileID: 1495050256765484507}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SangueSystem
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -4848,7 +4848,7 @@ GameObject:
   - component: {fileID: 7628033040427138407}
   - component: {fileID: 5320030777738449448}
   - component: {fileID: 3843702480180011458}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SangueSystemFloor
   m_TagString: Enemy
   m_Icon: {fileID: 0}

@@ -136,8 +136,8 @@ MonoBehaviour:
   DMG: 70
   RB: {fileID: 5797395362761581684}
   TempoDet: 4
-  radius: 10
-  power: 200
-  upwardsModifier: 50
+  radius: 2.08
+  power: 43
+  upwardsModifier: 10
   ExplosionSound: {fileID: 8300000, guid: 24ca108d70b91e147a6afc24b4cc5c6e, type: 3}
   forceMode: 1

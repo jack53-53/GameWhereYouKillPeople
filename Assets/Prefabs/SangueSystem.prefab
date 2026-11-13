@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2222056241905388769}
   - component: {fileID: 1295102070722998362}
   - component: {fileID: 1515476999332498121}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SangueSystemFloor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6672234127625058975}
   serializedVersion: 8
-  lengthInSec: 5
+  lengthInSec: 10.25
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -611,7 +611,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.89
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3677,7 +3677,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     type: 1
     collisionMode: 0
@@ -3689,7 +3689,7 @@ ParticleSystem:
     m_Dampen:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3795,7 +3795,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3847,15 +3847,15 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 0
     maxKillSpeed: 10000
-    radiusScale: 0.1
+    radiusScale: 0.0001
     collidesWith:
       serializedVersion: 2
       m_Bits: 4294967295
-    maxCollisionShapes: 256
+    maxCollisionShapes: 1
     quality: 0
     voxelSize: 0.5
     collisionMessages: 0
-    collidesWithDynamic: 1
+    collidesWithDynamic: 0
     interiorCollisions: 0
   TriggerModule:
     enabled: 0
@@ -4905,7 +4905,7 @@ GameObject:
   - component: {fileID: 5320728167173882409}
   - component: {fileID: 8005655967725267833}
   - component: {fileID: 2870561239280211749}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SangueSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4921,7 +4921,7 @@ Transform:
   m_GameObject: {fileID: 7790009579487230782}
   serializedVersion: 2
   m_LocalRotation: {x: -0.19634983, y: 0.49959934, z: -0.8057998, w: -0.2500678}
-  m_LocalPosition: {x: -1.24, y: 3.6, z: 1.76963}
+  m_LocalPosition: {x: 8.7908325, y: 4.5, z: 1.3721178}
   m_LocalScale: {x: 0.08, y: 0.08, z: 0.08}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -5011,8 +5011,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 3
-      minScalar: 1
+      scalar: 8
+      minScalar: 5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5182,8 +5182,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 10
-      minScalar: 6
+      scalar: 3
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5560,10 +5560,10 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 12.66
+    angle: 0
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
-    radiusThickness: 1
+    radiusThickness: 0
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
@@ -5646,7 +5646,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0.82
     radius:
-      value: 2.45
+      value: 0.02
       mode: 0
       spread: 0
       speed:
@@ -8684,7 +8684,7 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 0
     maxKillSpeed: 10000
-    radiusScale: 0.1
+    radiusScale: 0.0001
     collidesWith:
       serializedVersion: 2
       m_Bits: 4294967295

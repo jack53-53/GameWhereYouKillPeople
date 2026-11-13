@@ -1,10 +1,8 @@
 using System.Collections;
-using NUnit.Framework.Constraints;
 using TMPro;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -167,6 +165,9 @@ public class playerscript : MonoBehaviour
     public Slider SliderSens;
     public Slider SliderMusica;
 
+    [Header("Mobile")]
+    public GameObject[] iconesMobile;
+
     [Header("Passos")]
     public AudioClip[] MetalFootsteps;
     public AudioClip[] WoodFootsteps;
@@ -203,9 +204,10 @@ public class playerscript : MonoBehaviour
     public AudioClip DoideraReady;
     public AudioClip DoideraShoot;
     public AudioClip SoundtrackFight;
+    public AudioClip SoundTrackHouse;
     public AudioClip HitMarkerSound;
     public AudioSource SoundtrackSourse;
-
+    private Vector2 TouchLook;
 
 
     void Start()
@@ -215,10 +217,6 @@ public class playerscript : MonoBehaviour
         Color color = KillEffect.color;
         color.a = 0f;
         KillEffect.color = color;
-        GameManagerScript.instance.Sensitivity = SliderSens.value;
-        GameManagerScript.instance.SoundFxVolume = SliderFX.value;
-        GameManagerScript.instance.SoundVolume = SliderMusica.value;
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         _pistolMAG = pistolMAG;
         _rifleMAG = rifleMAG;
         _granadaMAG = granadaMAG;
@@ -228,7 +226,33 @@ public class playerscript : MonoBehaviour
         if(SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Casa"))
         {
             SoundtrackSourse.clip = SoundtrackFight;
+            SliderSens.value = GameManagerScript.instance.Sensitivity;
+            SliderFX.value = GameManagerScript.instance.SoundFxVolume;
+            SliderMusica.value = GameManagerScript.instance.SoundVolume;
         }
+        else
+        {
+            SoundtrackSourse.clip = SoundTrackHouse;
+            GameManagerScript.instance.Sensitivity = SliderSens.value;
+            GameManagerScript.instance.SoundFxVolume = SliderFX.value;
+            GameManagerScript.instance.SoundVolume = SliderMusica.value;
+        }
+        TouchSimulation.Enable();
+        //if (SystemInfo.deviceType == DeviceType.Handheld)
+        //{
+        //    foreach (GameObject a in iconesMobile)
+        //    {
+        //        a.SetActive(true);
+        //    }
+        //}
+        //else if (SystemInfo.deviceType == DeviceType.Desktop)
+        //{
+        //    UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        //    foreach (GameObject a in iconesMobile)
+        //    {
+        //        a.SetActive(false);
+        //    }
+        //}
         SoundtrackSourse.volume = GameManagerScript.instance.SoundVolume;
         SoundtrackSourse.Play();
         // _localXCameraBreath = localXCameraBreath;
@@ -355,8 +379,6 @@ public class playerscript : MonoBehaviour
         //         //TODO: fica pra amanha dnv
         //     }
         // }
-        cameraPitch -= Look.y * GameManagerScript.instance.Sensitivity;
-        cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
 
         //float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmmount;
         if (IsPaused)
@@ -376,7 +398,14 @@ public class playerscript : MonoBehaviour
             {
                 child.gameObject.SetActive(true);
             }
-            GameManagerScript.instance.Sensitivity = SliderSens.value;
+            if(SystemInfo.deviceType == DeviceType.Handheld)
+            {
+                GameManagerScript.instance.Sensitivity = SliderSens.value * 2;
+            }
+            else
+            {
+                GameManagerScript.instance.Sensitivity = SliderSens.value;
+            }
             GameManagerScript.instance.SoundFxVolume = SliderFX.value;
             GameManagerScript.instance.SoundMusicVolume = SliderMusica.value;
             SoundtrackSourse.volume = GameManagerScript.instance.SoundMusicVolume;
@@ -397,6 +426,14 @@ public class playerscript : MonoBehaviour
             {
                 child.gameObject.SetActive(false);
             }
+            Vector2 lookInput = Look * Time.deltaTime + TouchLook;
+
+            cameraPitch -= lookInput.y * GameManagerScript.instance.Sensitivity;
+            cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
+
+            transform.Rotate(Vector3.up * lookInput.x * GameManagerScript.instance.Sensitivity);
+
+            TouchLook = Vector2.zero;
             Time.timeScale = 1f;
         }
 
@@ -571,8 +608,6 @@ public class playerscript : MonoBehaviour
         //Debug.Log("cooldown tiro:" + _tiroCL );
         //Debug.Log("atirando?:" + Fired.ToString() );
 
-        transform.Rotate(Vector3.up * Look.x * GameManagerScript.instance.Sensitivity);
-
 
         if (Fired && !Reloading && canFire && !IsDeploying && !IsCivillian)
         {
@@ -698,9 +733,9 @@ public class playerscript : MonoBehaviour
     {
         StartCoroutine(DamageCamera(0, 2f));
         RaycastHit hit;
-        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity)) //acertando o player, eu acho
+        if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity) && TipoArma != 0) //acertando o player, eu acho
         {
-            Debug.Log(hit.collider);
+            //Debug.Log(hit.collider);
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
             if (TipoArma == 1)
@@ -743,10 +778,41 @@ public class playerscript : MonoBehaviour
                 Barril.Explode();
             }
         }
+        else if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, 2f))
+        {
+            if (!hit.collider.gameObject.CompareTag("Enemy"))
+            {
+                GameObject bulletHole = Instantiate(BulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));//TOD1:atirar uma vez, esperar o cooldown de cada arma e atirar dnv 
+                Destroy(bulletHole, 10f);
+            }
+            else
+            {
+                GameObject BloodSplatter = Instantiate(BloodSplatterEffect, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(-hit.normal));
+                Destroy(BloodSplatter, 0.3f);
+                SoundFxManager.instance.PlaySoundClip(HitMarkerSound, this.transform, GameManagerScript.instance.SoundFxVolume, 0f, 1f);
+            }
+            //Debug.Log("acertei um gameobject");
+            if (hit.collider.TryGetComponent<EnemyScript>(out EnemyScript enemy))
+            {
+                if (enemy.TakeDamage(DMG, this.transform))
+                {
+                    StartCoroutine(KillScreenEffect(KillEffect, MultiplierKillEffectSpeed, CorKillScreenEffect));
+                }
+            }
+            else if (hit.collider.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            {
+                rb.angularVelocity += PlayerCamera.transform.forward * 40f;
+            }
+            if (hit.collider.TryGetComponent<barrelScript>(out barrelScript Barril))
+            {
+                Barril.Explode();
+            }
+        }
         else
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
         }
+        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -813,7 +879,7 @@ public class playerscript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("SEM BALA");
+                        //Debug.Log("SEM BALA");
                     }
                     ammoTXT.text = (_pistolMAG.ToString() + "/" + _pistolMAX.ToString());
                 }
@@ -831,7 +897,7 @@ public class playerscript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("SEM BALA");
+                        //Debug.Log("SEM BALA");
                     }
                     ammoTXT.text = (_rifleMAG.ToString() + "/" + _rifleMAX.ToString());
                 }
@@ -849,7 +915,7 @@ public class playerscript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("SEM BALA");
+                        //Debug.Log("SEM BALA");
                     }
                     ammoTXT.text = (_granadaMAG.ToString() + "/" + _granadaMAX.ToString());
                 }
@@ -867,7 +933,7 @@ public class playerscript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("SEM BALA");
+                        //Debug.Log("SEM BALA");
                     }
                     ammoTXT.text = (_rocketMAG.ToString() + "/" + _rocketMAX.ToString());
                 }
@@ -885,7 +951,7 @@ public class playerscript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("SEM BALA");
+                        //Debug.Log("SEM BALA");
                     }
                     ammoTXT.text = (_doideraMAG.ToString() + "/" + _doideraMAX.ToString());
                 }
@@ -967,7 +1033,7 @@ public class playerscript : MonoBehaviour
 
                 case "Madeira":
                     sounds = WoodFootsteps;
-                    Debug.Log("é madeira");
+                    //Debug.Log("é madeira");
                     break;
             }
         }
@@ -981,7 +1047,7 @@ public class playerscript : MonoBehaviour
         AudioClip selectedSound = sounds[UnityEngine.Random.Range(0, sounds.Length)];
 
         SoundFxManager.instance.PlaySoundClip(selectedSound, this.transform, GameManagerScript.instance.SoundFxVolume, MinFootstepPitch, MaxFootstepPitch);
-        Debug.Log("Tentando usar o sounfxmanager");
+        //Debug.Log("Tentando usar o sounfxmanager");
     }
 
     IEnumerator OverhealBGone()
@@ -1195,5 +1261,9 @@ public class playerscript : MonoBehaviour
     public void OnPause(InputValue e)
     {
         IsPaused = !IsPaused;
+    }
+    public void AddTouchLook(Vector2 delta)
+    {
+        TouchLook += delta;
     }
 }

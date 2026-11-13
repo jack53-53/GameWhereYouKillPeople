@@ -285,11 +285,42 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7900444425600109766, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.329956
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
+--- !u!1 &56573711 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5148817236446094103, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
+  m_PrefabInstance: {fileID: 231305714}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &56573715
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56573711}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4579454407841743219, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
 --- !u!1 &67305447 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7548224472083159053, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
@@ -779,7 +810,7 @@ PrefabInstance:
       addedObject: {fileID: 446248051}
     - targetCorrespondingSourceObject: {fileID: -466329591000292508, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 677874273}
+      addedObject: {fileID: 677874277}
     - targetCorrespondingSourceObject: {fileID: -208595431880416365, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1265338939}
@@ -804,6 +835,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -7029948723529949830, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 624016261}
+    - targetCorrespondingSourceObject: {fileID: 5148817236446094103, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 56573715}
     - targetCorrespondingSourceObject: {fileID: -7548224472083159053, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 67305451}
@@ -1280,8 +1314,8 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -466329591000292508, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
   m_PrefabInstance: {fileID: 231305714}
   m_PrefabAsset: {fileID: 0}
---- !u!64 &677874273
-MeshCollider:
+--- !u!65 &677874277
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1298,10 +1332,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -2228417370725966487, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 0.13826121, y: 0, z: 0.036324296}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &734314933 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3259483055651355834, guid: 028afae328eb4cd4cad755bc4caa0f0f, type: 3}
@@ -1319,6 +1352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87b11a0d10d0ec746a294f050ab75683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  Texto: {fileID: 1026762119}
 --- !u!65 &734314938
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1645,6 +1679,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorProperty
   tipoChao: Madeira
+--- !u!114 &1026762119 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9023529110174956530, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
+  m_PrefabInstance: {fileID: 49343993}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1141935941
 GameObject:
   m_ObjectHideFlags: 0
@@ -1949,7 +1994,7 @@ Light:
   m_InnerSpotAngle: 0
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1992,7 +2037,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShadowRadius: 1
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -2103,7 +2148,7 @@ Light:
   m_InnerSpotAngle: 0
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -2146,7 +2191,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShadowRadius: 1
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1

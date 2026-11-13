@@ -236,7 +236,7 @@ public class EnemyScript : MonoBehaviour
             QueryTriggerInteraction.Collide
         );
 
-        Debug.DrawRay(origin, direction * 100f, Color.red, 2f);
+        //Debug.DrawRay(origin, direction * 100f, Color.red, 2f);
 
         bool hitPlayer = didHit && hit.collider != null &&
             (hit.transform == playerTransform ||
@@ -244,8 +244,8 @@ public class EnemyScript : MonoBehaviour
 
         bool missed = Random.Range(0, 100) < ChanceToMiss;
         
-        Debug.Log("Errou: " +  missed);
-        Debug.Log(Random.Range(0, 100));
+        //Debug.Log("Errou: " +  missed);
+        //Debug.Log(Random.Range(0, 100));
 
         Vector3 trailEnd;
 

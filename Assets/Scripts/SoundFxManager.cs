@@ -29,6 +29,6 @@ public class SoundFxManager : MonoBehaviour
         audioSource.volume = volume;
         audioSource.pitch = UnityEngine.Random.Range(PitchBaixo, PitchAlto); //lembrar de deixar entre -3 e 3
         audioSource.Play();
-        Destroy(audioSource, audioSource.clip.length);
+        Destroy(audioSource.gameObject, audioSource.clip.length / Mathf.Abs(audioSource.pitch));
     }
 }
