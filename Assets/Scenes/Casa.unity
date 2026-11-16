@@ -285,6 +285,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7772198487697796568, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
+      propertyPath: m_ControlPath
+      value: <Gamepad>/rightTrigger
+      objectReference: {fileID: 0}
     - target: {fileID: 7900444425600109766, guid: 39c1a518b57ee4248aad80448a7bcff3, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 3.329956

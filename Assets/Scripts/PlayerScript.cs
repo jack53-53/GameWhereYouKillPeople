@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class playerscript : MonoBehaviour
 {
 
-    public int HP; 
+    public int HP;
     [Header("Movement")]
     public float Acceleration = 20f;
     public float GroundFriction = 8f;
@@ -212,6 +212,8 @@ public class playerscript : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(
+        SystemInfo.deviceType);
         _fpsText.text = "FPS: 0";
         layerMask = LayerMask.GetMask("Default");
         Color color = KillEffect.color;
@@ -223,7 +225,7 @@ public class playerscript : MonoBehaviour
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
         _TempoPraVerSeOEfeitoQuebrou = TempoPraVerSeOEfeitoQuebrou;
-        if(SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Casa"))
+        if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Casa"))
         {
             SoundtrackSourse.clip = SoundtrackFight;
             SliderSens.value = GameManagerScript.instance.Sensitivity;
@@ -237,22 +239,21 @@ public class playerscript : MonoBehaviour
             GameManagerScript.instance.SoundFxVolume = SliderFX.value;
             GameManagerScript.instance.SoundVolume = SliderMusica.value;
         }
-        TouchSimulation.Enable();
-        //if (SystemInfo.deviceType == DeviceType.Handheld)
-        //{
-        //    foreach (GameObject a in iconesMobile)
-        //    {
-        //        a.SetActive(true);
-        //    }
-        //}
-        //else if (SystemInfo.deviceType == DeviceType.Desktop)
-        //{
-        //    UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        //    foreach (GameObject a in iconesMobile)
-        //    {
-        //        a.SetActive(false);
-        //    }
-        //}
+        if (SystemInfo.deviceType == DeviceType.Handheld)
+        {
+            foreach (GameObject a in iconesMobile)
+            {
+                a.SetActive(true);
+            }
+        }
+        else if (SystemInfo.deviceType == DeviceType.Desktop)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            foreach (GameObject a in iconesMobile)
+            {
+                a.SetActive(false);
+            }
+        }
         SoundtrackSourse.volume = GameManagerScript.instance.SoundVolume;
         SoundtrackSourse.Play();
         // _localXCameraBreath = localXCameraBreath;
@@ -268,10 +269,7 @@ public class playerscript : MonoBehaviour
             StartCoroutine(OverhealBGone());
         }
         debugTXT.text = writeToScreen;
-        if (Mouse.current != null) //TODO: fazer o mesmo pro comando
-        {
-            Fired = Mouse.current.leftButton.isPressed; //grande merda, tive que usar o sistema antigo
-        }
+        Fired = (Mouse.current != null && Mouse.current.leftButton.isPressed) || (Gamepad.current != null && Gamepad.current.rightTrigger.isPressed);
         if (IsDeploying)
         {
             deployTimer -= Time.deltaTime;
@@ -398,14 +396,7 @@ public class playerscript : MonoBehaviour
             {
                 child.gameObject.SetActive(true);
             }
-            if(SystemInfo.deviceType == DeviceType.Handheld)
-            {
-                GameManagerScript.instance.Sensitivity = SliderSens.value * 2;
-            }
-            else
-            {
-                GameManagerScript.instance.Sensitivity = SliderSens.value;
-            }
+            GameManagerScript.instance.Sensitivity = SliderSens.value;
             GameManagerScript.instance.SoundFxVolume = SliderFX.value;
             GameManagerScript.instance.SoundMusicVolume = SliderMusica.value;
             SoundtrackSourse.volume = GameManagerScript.instance.SoundMusicVolume;
@@ -426,14 +417,18 @@ public class playerscript : MonoBehaviour
             {
                 child.gameObject.SetActive(false);
             }
-            Vector2 lookInput = Look * Time.deltaTime + TouchLook;
-
+            Vector2 lookInput = Vector2.zero;
+            if (SystemInfo.deviceType == DeviceType.Handheld)
+            {
+                lookInput = Look * Time.deltaTime + TouchLook;
+            }
+            else if (Mouse.current != null)
+            {
+                lookInput = Mouse.current.delta.ReadValue();
+            }
             cameraPitch -= lookInput.y * GameManagerScript.instance.Sensitivity;
             cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
-
             transform.Rotate(Vector3.up * lookInput.x * GameManagerScript.instance.Sensitivity);
-
-            TouchLook = Vector2.zero;
             Time.timeScale = 1f;
         }
 
@@ -592,7 +587,7 @@ public class playerscript : MonoBehaviour
 
         move = Vector3.ClampMagnitude(move, 1f);
 
-        bool grounded = Physics.Raycast(transform.position,Vector3.down,1.2f);
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, 1.2f);
 
         if (grounded)
         {
@@ -812,7 +807,7 @@ public class playerscript : MonoBehaviour
         {
             Debug.DrawRay(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
         }
-        
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -1111,7 +1106,7 @@ public class playerscript : MonoBehaviour
 
         horizontalVelocity *= newSpeed / speed;
 
-        RB.linearVelocity = new Vector3(horizontalVelocity.x,velocity.y,horizontalVelocity.z);
+        RB.linearVelocity = new Vector3(horizontalVelocity.x, velocity.y, horizontalVelocity.z);
     }
 
     void Accelerate(Vector3 wishDirection, float wishSpeed, float acceleration)
@@ -1123,7 +1118,7 @@ public class playerscript : MonoBehaviour
 
         Vector3 velocity = RB.linearVelocity;
 
-        Vector3 horizontalVelocity = new Vector3(velocity.x,0f,velocity.z);
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0f, velocity.z);
 
         float currentSpeed = Vector3.Dot(horizontalVelocity, wishDirection);
 
@@ -1140,7 +1135,7 @@ public class playerscript : MonoBehaviour
 
         horizontalVelocity += wishDirection * accelerationSpeed;
 
-        RB.linearVelocity = new Vector3(horizontalVelocity.x,velocity.y,horizontalVelocity.z);
+        RB.linearVelocity = new Vector3(horizontalVelocity.x, velocity.y, horizontalVelocity.z);
     }
 
     IEnumerator CameraRecover(float X) //pra camera fazer o recover, eu to salvando o valor original antes de mudar, e dai eu to fazendo a mesma função dnv so que sem o recover
