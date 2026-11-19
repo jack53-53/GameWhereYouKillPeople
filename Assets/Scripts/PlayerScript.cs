@@ -256,6 +256,7 @@ public class playerscript : MonoBehaviour
         }
         SoundtrackSourse.volume = GameManagerScript.instance.SoundVolume;
         SoundtrackSourse.Play();
+        SoundtrackSourse.loop = true;
         // _localXCameraBreath = localXCameraBreath;
         // _localYCameraBreath = localYCameraBreath;
     }
@@ -726,7 +727,8 @@ public class playerscript : MonoBehaviour
     //}
     private void atirar(int DMG, int TipoArma)
     {
-        StartCoroutine(DamageCamera(0, 2f));
+        StartCoroutine(Recoil(5f, 0.01f));
+        //AQUI
         RaycastHit hit;
         if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity) && TipoArma != 0) //acertando o player, eu acho
         {
@@ -1159,6 +1161,23 @@ public class playerscript : MonoBehaviour
 
         CameraIsRecovering = false;
     }
+
+    IEnumerator Recoil(float X, float Duracao) //Mesma coisa dos outros mas diferente pra ter um recoil
+    {
+        float timer = 0f;
+
+        float startingRoll = cameraPitch;
+        float targetRoll = cameraPitch - X;
+        while (timer < Duracao)
+        {
+            timer += Time.deltaTime;
+
+            cameraPitch = Mathf.Lerp(startingRoll, targetRoll, timer / Duracao);
+
+            yield return null;
+        }
+    }
+
     private float GetDeployTime(int weapon)
     {
         switch (weapon)
