@@ -4,12 +4,14 @@ public class DropScript : MonoBehaviour
 {
     public int tipo; //0 = sem arma, 1 = pistola, 2 = rifle, 3 = granada, 4 = bazooka, 5 = BFG
     public int municao; //quantidade de munição que vai dar pro player
+    public AudioClip som;
 
     public void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             playerscript p = other.gameObject.GetComponent<playerscript>();
+            SoundFxManager.instance.PlaySoundClip(som, this.transform, GameManagerScript.instance.SoundFxVolume * 4f, 1f, 2f);
             switch (tipo)
             {
                 case 1:

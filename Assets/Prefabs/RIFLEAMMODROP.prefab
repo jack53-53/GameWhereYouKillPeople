@@ -129,6 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropScript
   tipo: 2
   municao: 20
+  som: {fileID: 8300000, guid: 9a25b503b475d804380952bdf377c2f4, type: 3}
 --- !u!54 &-736912443274985366
 Rigidbody:
   m_ObjectHideFlags: 0

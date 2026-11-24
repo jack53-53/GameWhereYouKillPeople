@@ -9,7 +9,7 @@ public class MobileLookArea : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // Start tracking the finger.
+
     }
 
     public void OnDrag(PointerEventData eventData)

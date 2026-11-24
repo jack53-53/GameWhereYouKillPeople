@@ -137,6 +137,7 @@ public class playerscript : MonoBehaviour
     public TextMeshProUGUI debugTXT;
     public TextMeshProUGUI vidaTXT;
     public TextMeshProUGUI ammoTXT;
+    public TextMeshProUGUI exitTXT;
     public TextMeshProUGUI _fpsText;
     public RawImage SKULL;
     private bool hasPlayedSkull = false;
@@ -206,14 +207,13 @@ public class playerscript : MonoBehaviour
     public AudioClip SoundtrackFight;
     public AudioClip SoundTrackHouse;
     public AudioClip HitMarkerSound;
+    public AudioClip TakeDamageSound;
     public AudioSource SoundtrackSourse;
     private Vector2 TouchLook;
 
 
     void Start()
     {
-        Debug.Log(
-        SystemInfo.deviceType);
         _fpsText.text = "FPS: 0";
         layerMask = LayerMask.GetMask("Default");
         Color color = KillEffect.color;
@@ -225,19 +225,16 @@ public class playerscript : MonoBehaviour
         _rocketMAG = rocketMAG;
         _doideraMAG = doideraMAG;
         _TempoPraVerSeOEfeitoQuebrou = TempoPraVerSeOEfeitoQuebrou;
+        SliderSens.value = GameManagerScript.instance.Sensitivity;
+        SliderFX.value = GameManagerScript.instance.SoundFxVolume;
+        SliderMusica.value = GameManagerScript.instance.SoundMusicVolume;
         if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Casa"))
         {
             SoundtrackSourse.clip = SoundtrackFight;
-            SliderSens.value = GameManagerScript.instance.Sensitivity;
-            SliderFX.value = GameManagerScript.instance.SoundFxVolume;
-            SliderMusica.value = GameManagerScript.instance.SoundVolume;
         }
         else
         {
             SoundtrackSourse.clip = SoundTrackHouse;
-            GameManagerScript.instance.Sensitivity = SliderSens.value;
-            GameManagerScript.instance.SoundFxVolume = SliderFX.value;
-            GameManagerScript.instance.SoundVolume = SliderMusica.value;
         }
         if (SystemInfo.deviceType == DeviceType.Handheld)
         {
@@ -254,7 +251,7 @@ public class playerscript : MonoBehaviour
                 a.SetActive(false);
             }
         }
-        SoundtrackSourse.volume = GameManagerScript.instance.SoundVolume;
+        SoundtrackSourse.volume = GameManagerScript.instance.SoundMusicVolume;
         SoundtrackSourse.Play();
         SoundtrackSourse.loop = true;
         // _localXCameraBreath = localXCameraBreath;
@@ -358,6 +355,13 @@ public class playerscript : MonoBehaviour
             hasPlayedSkull = false;
         }
 
+        if(HP <= 0)
+        {
+            GameManagerScript.instance.Cena = SceneManager.GetActiveScene();
+            Debug.Log(SceneManager.GetActiveScene());
+            SceneManager.LoadScene("Morte");
+        }
+
         float targetRoll = -Dire.x * 7f;
 
         //coisos da camera
@@ -401,11 +405,13 @@ public class playerscript : MonoBehaviour
             GameManagerScript.instance.SoundFxVolume = SliderFX.value;
             GameManagerScript.instance.SoundMusicVolume = SliderMusica.value;
             SoundtrackSourse.volume = GameManagerScript.instance.SoundMusicVolume;
+            exitTXT.gameObject.SetActive(true);
         }
         else
         {
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             PlayerCamera.transform.localRotation = Quaternion.Euler(cameraPitch, 0f, cameraRoll);
+            exitTXT.gameObject.SetActive(false);
             foreach (Transform child in SliderSens.transform)
             {
                 child.gameObject.SetActive(false);
@@ -988,11 +994,11 @@ public class playerscript : MonoBehaviour
         //}
 
         t = 0f;
-        while (r.color.a < 0.3f)
+        while (r.color.a < 0.2f)
         {
             t += Time.deltaTime * Mult;
             c = Cor;
-            c.a = Mathf.Lerp(0, 0.4f, t);
+            c.a = Mathf.Lerp(0, 0.3f, t);
             r.color = c;
             yield return null;
         }
@@ -1003,7 +1009,7 @@ public class playerscript : MonoBehaviour
         {
             t += Time.deltaTime * Mult;
             c = Cor;
-            c.a = Mathf.Lerp(0.3f, 0f, t);
+            c.a = Mathf.Lerp(0.2f, 0f, t);
             r.color = c;
             yield return null;
         }
@@ -1012,6 +1018,7 @@ public class playerscript : MonoBehaviour
     public void takeDamage(int DMG, Vector3 EnemyLocation)
     {
         HP -= DMG;
+        SoundFxManager.instance.PlaySoundClip(TakeDamageSound, this.transform, GameManagerScript.instance.SoundFxVolume, 1f, 2f);
         DMGSetaScript.IniciarAnimacao(ArrowEffectSpeed, TempoParaDamageIndicatorDesaparecer, EnemyLocation);
         StartCoroutine(DamageCamera(-3f, 5f));
     }

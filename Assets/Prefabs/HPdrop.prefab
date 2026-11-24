@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   healAmmount: 20
+  SomHealing: {fileID: 8300000, guid: 4d168d851a29be64b9fa2f248f291adc, type: 3}
 --- !u!54 &2299078705336853265
 Rigidbody:
   m_ObjectHideFlags: 0
