@@ -357,8 +357,7 @@ public class playerscript : MonoBehaviour
 
         if(HP <= 0)
         {
-            GameManagerScript.instance.Cena = SceneManager.GetActiveScene();
-            Debug.Log(SceneManager.GetActiveScene());
+            GameManagerScript.instance.Cena = SceneManager.GetActiveScene().name;
             SceneManager.LoadScene("Morte");
         }
 

@@ -425,6 +425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e300df3e125533b41a0314738719335d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnPlayerIntoTerroristScript
+  Narracao: {fileID: 8300000, guid: fef4b306d39f5ce4bb85f313152e1069, type: 3}
 --- !u!65 &222116660
 BoxCollider:
   m_ObjectHideFlags: 0

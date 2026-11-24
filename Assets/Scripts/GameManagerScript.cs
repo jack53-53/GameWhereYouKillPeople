@@ -8,7 +8,7 @@ public class GameManagerScript : MonoBehaviour
     public float SoundFxVolume;
     public float SoundMusicVolume;
     public float Sensitivity;
-    public Scene Cena;
+    public string Cena;
     private void Awake()
     {
         if (instance != null && instance != this)
